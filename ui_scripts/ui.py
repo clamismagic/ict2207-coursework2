@@ -1,5 +1,6 @@
 from gc import get_threshold
 import sys
+from turtle import color
 
 # import all for now
 from PySide2.QtCore import *
@@ -26,39 +27,41 @@ class MainWindow(QMainWindow):
         #Title
         self.setWindowTitle("APK Obfuscator")
 
+        #Labels and Buttons
+        titleLabel = QLabel("APK OBFUSCATOR")
+        titleFont = QFont()
+        titleFont.setBold(True)
+        titleLabel.setFont(titleFont)
 
-        #Set layout
-        mainLayout = QVBoxLayout()
-        tabLayout = QHBoxLayout()
-        filesLayout = QHBoxLayout()
-        textLayout = QHBoxLayout()
-        keysLayout = QHBoxLayout()
+    
+        apkpathLabel = QLabel("APK Path: ")
+        apkpathEdit = QLineEdit()
+        apkpathButton = QPushButton()
 
+        projectnameLabel = QLabel("Project Name: ")
+        projectnameEdit = QLineEdit()
 
-        #File layout
-        filesLayout.addWidget(Color('red'))
-        filesLayout.addWidget(Color('yellow'))
-        filesLayout.addWidget(Color('purple'))
-        filesLayout.addWidget(Color('black'))
-        mainLayout.addLayout(filesLayout)
-
-        #Tab layout
-        tabLayout.addWidget(Color("gold"))
-        mainLayout.addLayout(tabLayout)
+        obfuscateButton = QPushButton()
+       
         
-        #Textbox output layout
-        textLayout.addWidget(Color('red'))
-        textLayout.addWidget(Color('purple'))
-        mainLayout.addLayout(textLayout)
+        #Set layout
+        mainLayout = QGridLayout()
+        # (0, 0), (0, 1), (0, 2), (0, 3),
+        # (1, 0), (1, 1), (1, 2), (1, 3),
+        # (2, 0), (2, 1), (2, 2), (2, 3),
+        # (3, 0), (3, 1), (3, 2), (3, 3 ),
+        # (4, 0), (4, 1), (4, 2), (4, 3)
+     
+        mainLayout.addWidget(titleLabel, 0, 0)
 
-        #Key layouts
-        keysLayout.addWidget(Color('red'))
-        keysLayout.addWidget(Color('purple'))
-        keysLayout.addWidget(Color('yellow'))
-        keysLayout.addWidget(Color('purple'))
-        keysLayout.addWidget(Color('black'))
-        mainLayout.addLayout(keysLayout)
+        mainLayout.addWidget(apkpathLabel, 1, 0)
+        mainLayout.addWidget(apkpathEdit, 1, 1)
+        mainLayout.addWidget(apkpathButton, 1 , 3)
 
+        mainLayout.addWidget(projectnameLabel, 2, 0)
+        mainLayout.addWidget(projectnameEdit, 2, 1)
+
+        mainLayout.addWidget(obfuscateButton, 1, 4, 2, 2)
 
 
         widget = QWidget()
@@ -72,16 +75,16 @@ class MainWindow(QMainWindow):
         #Size of Windows
         self.setMinimumSize(QSize(1200, 800))
 
-
+        #Set Background Color
+        
+        # self.setStyleSheet("background-color: #262626;")
 
         #Menu
-
         exitMenuButton = QAction("Exit", self)
         exitMenuButton.setStatusTip("Exit menu button")
         exitMenuButton.triggered.connect(self.onExitMenuButtonClick)
-
         menu = self.menuBar()
-
+        menu.setStyleSheet("background-color: white;")
         file_menu = menu.addMenu("&File")
         file_menu.addAction(exitMenuButton)
    
