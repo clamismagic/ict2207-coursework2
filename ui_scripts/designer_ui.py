@@ -12,18 +12,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.browseButton.clicked.connect(self.apkBrowse)
-        self.pushButton.clicked.connect(self.keystoreBrowse)
+        self.apkbrowseButton.clicked.connect(self.apkBrowse)
+        self.keystoreBrowseButton.clicked.connect(self.keystoreBrowse)
 
     def apkBrowse(self):
-        filePath = QFileDialog.getOpenFileName(self, 'Open File', "", "Android Package File (*.apk)")
+        filePath = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
         print (filePath[0])
         self.apkpathEdit.setText(filePath[0])
 
     def keystoreBrowse(self):
-        keyPath = QFileDialog.getOpenFileName(self, 'Open File', "", "JKS File (*.jks)")
+        keyPath = QFileDialog.getOpenFileName(self, 'Open JKS File', "", "JKS File (*.jks)")
         print (keyPath[0])
-        self.lineEdit.setText(keyPath[0])
+        self.keystorePathEdit.setText(keyPath[0])
 
 
 def main():

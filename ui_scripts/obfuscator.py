@@ -43,10 +43,10 @@ class Ui_MainWindow(object):
         self.detailsHLayout.setObjectName(u"detailsHLayout")
         self.detailsGLayout = QGridLayout()
         self.detailsGLayout.setObjectName(u"detailsGLayout")
-        self.browseButton = QPushButton(self.centralwidget)
-        self.browseButton.setObjectName(u"browseButton")
+        self.apkbrowseButton = QPushButton(self.centralwidget)
+        self.apkbrowseButton.setObjectName(u"apkbrowseButton")
 
-        self.detailsGLayout.addWidget(self.browseButton, 0, 2, 1, 2)
+        self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 2, 1, 2)
 
         self.apkpathEdit = QLineEdit(self.centralwidget)
         self.apkpathEdit.setObjectName(u"apkpathEdit")
@@ -166,20 +166,20 @@ class Ui_MainWindow(object):
 
         self.buildGLayout.addWidget(self.label, 0, 0, 1, 1)
 
-        self.lineEdit = QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(u"lineEdit")
+        self.keystorePathEdit = QLineEdit(self.centralwidget)
+        self.keystorePathEdit.setObjectName(u"keystorePathEdit")
 
-        self.buildGLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
+        self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
 
-        self.lineEdit_2 = QLineEdit(self.centralwidget)
-        self.lineEdit_2.setObjectName(u"lineEdit_2")
+        self.keystorePasswordEdit = QLineEdit(self.centralwidget)
+        self.keystorePasswordEdit.setObjectName(u"keystorePasswordEdit")
 
-        self.buildGLayout.addWidget(self.lineEdit_2, 1, 1, 1, 2)
+        self.buildGLayout.addWidget(self.keystorePasswordEdit, 1, 1, 1, 2)
 
-        self.pushButton = QPushButton(self.centralwidget)
-        self.pushButton.setObjectName(u"pushButton")
+        self.keystoreBrowseButton = QPushButton(self.centralwidget)
+        self.keystoreBrowseButton.setObjectName(u"keystoreBrowseButton")
 
-        self.buildGLayout.addWidget(self.pushButton, 0, 2, 1, 1)
+        self.buildGLayout.addWidget(self.keystoreBrowseButton, 0, 2, 1, 1)
 
         self.lineEdit_3 = QLineEdit(self.centralwidget)
         self.lineEdit_3.setObjectName(u"lineEdit_3")
@@ -226,7 +226,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.titleLabel.setText(QCoreApplication.translate("MainWindow", u"OBFUSCATOR TOOL", None))
-        self.browseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
         self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
         self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
@@ -236,7 +236,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Keystore Password: ", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Build & Sign", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Keystore Path: ", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
         self.menuFiles.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
