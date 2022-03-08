@@ -3,6 +3,7 @@ from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PyQt5.uic import loadUi
+from PyQt5.QtGui import *
 
 from obfuscator import Ui_MainWindow
 
@@ -10,6 +11,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
+        self.browseButton.clicked.connect(self.apkBrowse)
+        self.pushButton.clicked.connect(self.keystoreBrowse)
+
+    def apkBrowse(self):
+        filePath = QFileDialog.getOpenFileName(self, 'Open File', "", "Android Package File (*.apk)")
+        print (filePath[0])
+        self.apkpathEdit.setText(filePath[0])
+
+    def keystoreBrowse(self):
+        keyPath = QFileDialog.getOpenFileName(self, 'Open File', "", "JKS File (*.jks)")
+        print (keyPath[0])
+        self.lineEdit.setText(keyPath[0])
+
 
 def main():
 
