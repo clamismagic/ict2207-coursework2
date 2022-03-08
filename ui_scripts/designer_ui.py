@@ -12,6 +12,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
 
+        self.actionExit.triggered.connect(self.exitProgram)
         self.apkbrowseButton.clicked.connect(self.apkBrowse)
         self.keystoreBrowseButton.clicked.connect(self.keystoreBrowse)
 
@@ -24,6 +25,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         keyPath = QFileDialog.getOpenFileName(self, 'Open JKS File', "", "JKS File (*.jks)")
         print (keyPath[0])
         self.keystorePathEdit.setText(keyPath[0])
+
+    def exitProgram(self):
+        quit()
 
 
 def main():
