@@ -1,0 +1,3 @@
+1. Move both files (apktool.jar & apktool.bat) to your Windows directory (Usually C://Windows)
+2. If you do not have access to C://Windows, you may place the two files anywhere then add that directory to your Environment Variables System PATH variable.
+3. Try running apktool via command promp

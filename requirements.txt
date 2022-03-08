@@ -1,2 +1,7 @@
 pip3 install pyside2
 pip3 install pyqt5
+
+For windows, Prerequisites (Can be installed from WinToInstall folder:
+	Install Apktool
+	Install apksigner
+	Install zipalign

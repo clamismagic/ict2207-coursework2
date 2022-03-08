@@ -1,0 +1,5 @@
+1. Go to android sdk manager -> SDK tools -> Install/update Android SDK Build-Tools 33-rc1 (Lastest version)
+
+2. Add C:\Users\{username}\AppData\Local\Android\Sdk\build-tools\33.0.0-rc1 to system envrionment path
+IF Android\Sdk\build-tools\33.0.0-rc1 is not in the directory above, change it to match your directory.
+
