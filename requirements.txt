@@ -5,4 +5,3 @@ For windows, Prerequisites (Can be installed from WinToInstall folder:
 	Install Apktool
 	Install apksigner
 	Install zipalign
-PySide2~=5.15.2.1
