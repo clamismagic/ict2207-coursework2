@@ -110,15 +110,15 @@ class Ui_MainWindow(object):
         self.textboxHLayout.setObjectName(u"textboxHLayout")
         self.textboxGLayout = QGridLayout()
         self.textboxGLayout.setObjectName(u"textboxGLayout")
-        self.beforeText = QTextEdit(self.centralwidget)
-        self.beforeText.setObjectName(u"beforeText")
-
-        self.textboxGLayout.addWidget(self.beforeText, 0, 0, 1, 1)
-
         self.afterText = QTextEdit(self.centralwidget)
         self.afterText.setObjectName(u"afterText")
 
         self.textboxGLayout.addWidget(self.afterText, 0, 1, 1, 1)
+
+        self.beforeText = QTextEdit(self.centralwidget)
+        self.beforeText.setObjectName(u"beforeText")
+
+        self.textboxGLayout.addWidget(self.beforeText, 0, 0, 1, 1)
 
 
         self.textboxHLayout.addLayout(self.textboxGLayout)
@@ -130,15 +130,15 @@ class Ui_MainWindow(object):
         self.baHLayout.setObjectName(u"baHLayout")
         self.baGLayout = QGridLayout()
         self.baGLayout.setObjectName(u"baGLayout")
-        self.beforeLabel = QLabel(self.centralwidget)
-        self.beforeLabel.setObjectName(u"beforeLabel")
-
-        self.baGLayout.addWidget(self.beforeLabel, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
-
         self.afterLabel = QLabel(self.centralwidget)
         self.afterLabel.setObjectName(u"afterLabel")
 
         self.baGLayout.addWidget(self.afterLabel, 0, 1, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+
+        self.beforeLabel = QLabel(self.centralwidget)
+        self.beforeLabel.setObjectName(u"beforeLabel")
+
+        self.baGLayout.addWidget(self.beforeLabel, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
 
 
         self.baHLayout.addLayout(self.baGLayout)
@@ -150,67 +150,62 @@ class Ui_MainWindow(object):
         self.buildHLayout.setObjectName(u"buildHLayout")
         self.buildGLayout = QGridLayout()
         self.buildGLayout.setObjectName(u"buildGLayout")
-        self.keystorePathEdit = QLineEdit(self.centralwidget)
-        self.keystorePathEdit.setObjectName(u"keystorePathEdit")
-
-        self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
-
         self.keyaliasEdit = QLineEdit(self.centralwidget)
         self.keyaliasEdit.setObjectName(u"keyaliasEdit")
 
-        self.buildGLayout.addWidget(self.keyaliasEdit, 0, 6, 1, 1)
+        self.buildGLayout.addWidget(self.keyaliasEdit, 0, 4, 1, 1)
 
-        self.aliaspassEdit = QLineEdit(self.centralwidget)
-        self.aliaspassEdit.setObjectName(u"aliaspassEdit")
+        self.aliaspassLabel = QLabel(self.centralwidget)
+        self.aliaspassLabel.setObjectName(u"aliaspassLabel")
 
-        self.buildGLayout.addWidget(self.aliaspassEdit, 1, 6, 1, 1)
+        self.buildGLayout.addWidget(self.aliaspassLabel, 1, 3, 1, 1)
+
+        self.keyaliasLabel = QLabel(self.centralwidget)
+        self.keyaliasLabel.setObjectName(u"keyaliasLabel")
+
+        self.buildGLayout.addWidget(self.keyaliasLabel, 0, 3, 1, 1)
+
+        self.keystoreBrowseButton = QPushButton(self.centralwidget)
+        self.keystoreBrowseButton.setObjectName(u"keystoreBrowseButton")
+
+        self.buildGLayout.addWidget(self.keystoreBrowseButton, 0, 2, 1, 1)
+
+        self.verifykeyButton = QPushButton(self.centralwidget)
+        self.verifykeyButton.setObjectName(u"verifykeyButton")
+        self.verifykeyButton.setMinimumSize(QSize(100, 70))
+
+        self.buildGLayout.addWidget(self.verifykeyButton, 0, 5, 2, 1)
 
         self.keypassLabel = QLabel(self.centralwidget)
         self.keypassLabel.setObjectName(u"keypassLabel")
 
         self.buildGLayout.addWidget(self.keypassLabel, 1, 0, 1, 1)
 
-        self.keystorePassEdit = QLineEdit(self.centralwidget)
-        self.keystorePassEdit.setObjectName(u"keystorePassEdit")
+        self.keystorePathEdit = QLineEdit(self.centralwidget)
+        self.keystorePathEdit.setObjectName(u"keystorePathEdit")
 
-        self.buildGLayout.addWidget(self.keystorePassEdit, 1, 1, 1, 3)
+        self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
 
         self.keypathLabel = QLabel(self.centralwidget)
         self.keypathLabel.setObjectName(u"keypathLabel")
 
         self.buildGLayout.addWidget(self.keypathLabel, 0, 0, 1, 1)
 
-        self.keystoreBrowseButton = QPushButton(self.centralwidget)
-        self.keystoreBrowseButton.setObjectName(u"keystoreBrowseButton")
+        self.aliaspassEdit = QLineEdit(self.centralwidget)
+        self.aliaspassEdit.setObjectName(u"aliaspassEdit")
 
-        self.buildGLayout.addWidget(self.keystoreBrowseButton, 0, 4, 1, 1)
+        self.buildGLayout.addWidget(self.aliaspassEdit, 1, 4, 1, 1)
 
         self.buildsignButton = QPushButton(self.centralwidget)
         self.buildsignButton.setObjectName(u"buildsignButton")
         self.buildsignButton.setMinimumSize(QSize(100, 70))
 
-        self.buildGLayout.addWidget(self.buildsignButton, 0, 8, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.buildGLayout.addWidget(self.buildsignButton, 0, 6, 2, 1)
 
-        self.keyaliasLabel = QLabel(self.centralwidget)
-        self.keyaliasLabel.setObjectName(u"keyaliasLabel")
+        self.keystorePassEdit = QLineEdit(self.centralwidget)
+        self.keystorePassEdit.setObjectName(u"keystorePassEdit")
 
-        self.buildGLayout.addWidget(self.keyaliasLabel, 0, 5, 1, 1)
-
-        self.aliasbrowseButton = QPushButton(self.centralwidget)
-        self.aliasbrowseButton.setObjectName(u"aliasbrowseButton")
-
-        self.buildGLayout.addWidget(self.aliasbrowseButton, 0, 7, 1, 1)
-
-        self.aliaspassLabel = QLabel(self.centralwidget)
-        self.aliaspassLabel.setObjectName(u"aliaspassLabel")
-
-        self.buildGLayout.addWidget(self.aliaspassLabel, 1, 5, 1, 1)
-
-        self.verifykeyButton = QPushButton(self.centralwidget)
-        self.verifykeyButton.setObjectName(u"verifykeyButton")
-        self.verifykeyButton.setMinimumSize(QSize(100, 70))
-
-        self.buildGLayout.addWidget(self.verifykeyButton, 0, 9, 2, 1)
+        self.buildGLayout.addWidget(self.keystorePassEdit, 1, 1, 1, 2)
 
 
         self.buildHLayout.addLayout(self.buildGLayout)
@@ -248,16 +243,15 @@ class Ui_MainWindow(object):
         self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
         self.verifyapkButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
         self.tabButtons.setText(QCoreApplication.translate("MainWindow", u"Tab 1", None))
-        self.beforeLabel.setText(QCoreApplication.translate("MainWindow", u"Before", None))
         self.afterLabel.setText(QCoreApplication.translate("MainWindow", u"After", None))
+        self.beforeLabel.setText(QCoreApplication.translate("MainWindow", u"Before", None))
+        self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
+        self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
+        self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        self.verifykeyButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
         self.keypassLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Password: ", None))
         self.keypathLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Path: ", None))
-        self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.buildsignButton.setText(QCoreApplication.translate("MainWindow", u"Build & Sign", None))
-        self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
-        self.aliasbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
-        self.verifykeyButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
+        self.buildsignButton.setText(QCoreApplication.translate("MainWindow", u"Build and Sign", None))
         self.menuFiles.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
     # retranslateUi
 
