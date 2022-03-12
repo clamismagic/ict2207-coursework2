@@ -56,6 +56,7 @@ class Ui_MainWindow(object):
 
         self.apkbrowseButton = QPushButton(self.centralwidget)
         self.apkbrowseButton.setObjectName(u"apkbrowseButton")
+        self.apkbrowseButton.setMinimumSize(QSize(75, 23))
 
         self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 3, 1, 2)
 
@@ -81,6 +82,7 @@ class Ui_MainWindow(object):
 
         self.verifyapkButton = QPushButton(self.centralwidget)
         self.verifyapkButton.setObjectName(u"verifyapkButton")
+        self.verifyapkButton.setMinimumSize(QSize(75, 23))
 
         self.detailsGLayout.addWidget(self.verifyapkButton, 0, 2, 1, 1)
 
@@ -167,6 +169,7 @@ class Ui_MainWindow(object):
 
         self.keystoreBrowseButton = QPushButton(self.centralwidget)
         self.keystoreBrowseButton.setObjectName(u"keystoreBrowseButton")
+        self.keystoreBrowseButton.setMinimumSize(QSize(75, 23))
 
         self.buildGLayout.addWidget(self.keystoreBrowseButton, 0, 2, 1, 1)
 

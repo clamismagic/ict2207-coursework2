@@ -5,12 +5,16 @@ from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 
+import qdarkstyle
+
 from obfuscator import Ui_MainWindow
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        
+        self.setStyleSheet(qdarkstyle.load_stylesheet())
 
         self.actionExit.triggered.connect(self.exitProgram)
         self.apkbrowseButton.clicked.connect(self.apkBrowse)

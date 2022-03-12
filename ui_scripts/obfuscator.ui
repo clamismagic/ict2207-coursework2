@@ -58,6 +58,12 @@
         </item>
         <item row="0" column="3" colspan="2">
          <widget class="QPushButton" name="apkbrowseButton">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Browse</string>
           </property>
@@ -85,6 +91,12 @@
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="verifyapkButton">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Verify</string>
           </property>
@@ -174,6 +186,12 @@
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="keystoreBrowseButton">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
           <property name="text">
            <string>Browse</string>
           </property>
