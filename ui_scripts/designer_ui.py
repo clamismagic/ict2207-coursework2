@@ -9,6 +9,11 @@ import qdarkstyle
 
 from obfuscator import Ui_MainWindow
 
+
+def exit_program():
+    quit()
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -16,22 +21,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
-        self.actionExit.triggered.connect(self.exitProgram)
-        self.apkbrowseButton.clicked.connect(self.apkBrowse)
-        self.keystoreBrowseButton.clicked.connect(self.keystoreBrowse)
+        self.actionExit.triggered.connect(exit_program)
+        self.apkbrowseButton.clicked.connect(self.apk_browse)
+        self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
 
-    def apkBrowse(self):
-        filePath = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
-        print (filePath[0])
-        self.apkpathEdit.setText(filePath[0])
+    def apk_browse(self):
+        file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
+        print(file_path[0])
+        self.apkpathEdit.setText(file_path[0])
 
-    def keystoreBrowse(self):
-        keyPath = QFileDialog.getOpenFileName(self, 'Open JKS File', "", "JKS File (*.jks)")
-        print (keyPath[0])
-        self.keystorePathEdit.setText(keyPath[0])
-
-    def exitProgram(self):
-        quit()
+    def keystore_browse(self):
+        key_path = QFileDialog.getOpenFileName(self, 'Open JKS File', "", "JKS File (*.jks)")
+        print(key_path[0])
+        self.keystorePathEdit.setText(key_path[0])
 
 
 def main():
@@ -39,7 +41,7 @@ def main():
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
     # If you know you won't use command line arguments QApplication([]) works too.
-    app = QApplication([])
+    app = QApplication()
 
     # Create a Qt widget, which will be our window.
     window = MainWindow()
@@ -51,3 +53,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
