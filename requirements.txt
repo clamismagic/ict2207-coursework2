@@ -1,6 +1,8 @@
 pip3 install pyside2
 pip3 install pyqt5
 pip3 install qdarkstyle
+pip3 install python-magic-bin==0.4.14
+
 
 For windows, Prerequisites (Can be installed from WinToInstall folder:
 	Install Apktool

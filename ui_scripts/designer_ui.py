@@ -1,5 +1,7 @@
 # import all for now
-from tkinter import Widget
+from email import message
+from http.client import OK
+from tkinter import E, Widget, messagebox
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
@@ -7,7 +9,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 
 import qdarkstyle
-
+import magic
 from obfuscator import Ui_MainWindow
 
 import os
@@ -45,7 +47,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        if ( self.apkpathEdit.text() != ''):
+        if ( self.apkpathEdit.text() != '' and magic.from_file(self.apkpathEdit.text()) == "Zip archive data"):
             try:
                 toObfuscate = controller.Controller(self.apkpathEdit.text(), '', '', '', '', '', '')
                 for x in range(5):
@@ -59,7 +61,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.tabWidget.addTab(tabWindow, str(x))
             except:
                 raise Exception
-        
+        else:
+            messageBox = QMessageBox()
+            messageBox.setStyleSheet(qdarkstyle.load_stylesheet())
+            messageBox.setWindowTitle("Error")
+            messageBox.setText("Incorrect File Provided!")
+            messageBox.exec_()
+
+
+            
 
 def main():
 
