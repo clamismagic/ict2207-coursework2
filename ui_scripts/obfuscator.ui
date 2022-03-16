@@ -37,6 +37,32 @@
      <layout class="QHBoxLayout" name="detailsHLayout">
       <item>
        <layout class="QGridLayout" name="detailsGLayout">
+        <item row="0" column="3" colspan="2">
+         <widget class="QPushButton" name="apkbrowseButton">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>23</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="projectnameEdit"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="projectnameLabel">
+          <property name="text">
+           <string>Project Name: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="apkpathEdit"/>
+        </item>
         <item row="0" column="5" rowspan="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
          <widget class="QPushButton" name="obfuscateButton">
           <property name="sizePolicy">
@@ -56,39 +82,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="3" colspan="2">
-         <widget class="QPushButton" name="apkbrowseButton">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>23</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="apkpathLabel">
-          <property name="text">
-           <string>APK Path: </string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="projectnameEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="projectnameLabel">
-          <property name="text">
-           <string>Project Name: </string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="apkpathEdit"/>
-        </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="verifyapkButton">
           <property name="minimumSize">
@@ -102,24 +95,10 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="tabHLayout">
-      <item>
-       <layout class="QGridLayout" name="tabGLayout">
         <item row="0" column="0">
-         <widget class="QPushButton" name="tabButtons">
-          <property name="maximumSize">
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
+         <widget class="QLabel" name="apkpathLabel">
           <property name="text">
-           <string>Tab 1</string>
+           <string>APK Path: </string>
           </property>
          </widget>
         </item>
@@ -128,34 +107,82 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="textboxHLayout">
-      <item>
-       <layout class="QGridLayout" name="textboxGLayout">
-        <item row="0" column="1">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTabBar::tab { min-height: 15px; min-width: 50px;}</string>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="tab1">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
          <widget class="QTextEdit" name="afterText"/>
         </item>
-        <item row="0" column="0">
+        <item>
          <widget class="QTextEdit" name="beforeText"/>
         </item>
        </layout>
-      </item>
-     </layout>
+      </widget>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="baHLayout">
       <item>
        <layout class="QGridLayout" name="baGLayout">
-        <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QLabel" name="afterLabel">
-          <property name="text">
-           <string>After</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
          <widget class="QLabel" name="beforeLabel">
           <property name="text">
            <string>Before</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="afterLabel">
+          <property name="text">
+           <string>After</string>
           </property>
          </widget>
         </item>

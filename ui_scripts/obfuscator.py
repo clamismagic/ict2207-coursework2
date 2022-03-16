@@ -43,27 +43,11 @@ class Ui_MainWindow(object):
         self.detailsHLayout.setObjectName(u"detailsHLayout")
         self.detailsGLayout = QGridLayout()
         self.detailsGLayout.setObjectName(u"detailsGLayout")
-        self.obfuscateButton = QPushButton(self.centralwidget)
-        self.obfuscateButton.setObjectName(u"obfuscateButton")
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.obfuscateButton.sizePolicy().hasHeightForWidth())
-        self.obfuscateButton.setSizePolicy(sizePolicy)
-        self.obfuscateButton.setMinimumSize(QSize(140, 50))
-
-        self.detailsGLayout.addWidget(self.obfuscateButton, 0, 5, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
-
         self.apkbrowseButton = QPushButton(self.centralwidget)
         self.apkbrowseButton.setObjectName(u"apkbrowseButton")
         self.apkbrowseButton.setMinimumSize(QSize(75, 23))
 
         self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 3, 1, 2)
-
-        self.apkpathLabel = QLabel(self.centralwidget)
-        self.apkpathLabel.setObjectName(u"apkpathLabel")
-
-        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 1, 1)
 
         self.projectnameEdit = QLineEdit(self.centralwidget)
         self.projectnameEdit.setObjectName(u"projectnameEdit")
@@ -80,11 +64,27 @@ class Ui_MainWindow(object):
 
         self.detailsGLayout.addWidget(self.apkpathEdit, 0, 1, 1, 1)
 
+        self.obfuscateButton = QPushButton(self.centralwidget)
+        self.obfuscateButton.setObjectName(u"obfuscateButton")
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.obfuscateButton.sizePolicy().hasHeightForWidth())
+        self.obfuscateButton.setSizePolicy(sizePolicy)
+        self.obfuscateButton.setMinimumSize(QSize(140, 50))
+
+        self.detailsGLayout.addWidget(self.obfuscateButton, 0, 5, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+
         self.verifyapkButton = QPushButton(self.centralwidget)
         self.verifyapkButton.setObjectName(u"verifyapkButton")
         self.verifyapkButton.setMinimumSize(QSize(75, 23))
 
         self.detailsGLayout.addWidget(self.verifyapkButton, 0, 2, 1, 1)
+
+        self.apkpathLabel = QLabel(self.centralwidget)
+        self.apkpathLabel.setObjectName(u"apkpathLabel")
+
+        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 1, 1)
 
 
         self.detailsHLayout.addLayout(self.detailsGLayout)
@@ -92,55 +92,53 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.detailsHLayout)
 
-        self.tabHLayout = QHBoxLayout()
-        self.tabHLayout.setObjectName(u"tabHLayout")
-        self.tabGLayout = QGridLayout()
-        self.tabGLayout.setObjectName(u"tabGLayout")
-        self.tabButtons = QPushButton(self.centralwidget)
-        self.tabButtons.setObjectName(u"tabButtons")
-        self.tabButtons.setMaximumSize(QSize(50, 16777215))
-
-        self.tabGLayout.addWidget(self.tabButtons, 0, 0, 1, 1)
-
-
-        self.tabHLayout.addLayout(self.tabGLayout)
-
-
-        self.verticalLayout.addLayout(self.tabHLayout)
-
-        self.textboxHLayout = QHBoxLayout()
-        self.textboxHLayout.setObjectName(u"textboxHLayout")
-        self.textboxGLayout = QGridLayout()
-        self.textboxGLayout.setObjectName(u"textboxGLayout")
-        self.afterText = QTextEdit(self.centralwidget)
+        self.tabWidget = QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setBaseSize(QSize(0, 0))
+        self.tabWidget.setStyleSheet(u"QTabBar::tab { min-height: 15px; min-width: 50px;}")
+        self.tabWidget.setTabShape(QTabWidget.Rounded)
+        self.tabWidget.setIconSize(QSize(16, 16))
+        self.tabWidget.setDocumentMode(True)
+        self.tabWidget.setTabsClosable(False)
+        self.tabWidget.setTabBarAutoHide(False)
+        self.tab1 = QWidget()
+        self.tab1.setObjectName(u"tab1")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.tab1.sizePolicy().hasHeightForWidth())
+        self.tab1.setSizePolicy(sizePolicy1)
+        self.tab1.setMinimumSize(QSize(0, 0))
+        self.tab1.setStyleSheet(u"")
+        self.horizontalLayout = QHBoxLayout(self.tab1)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.afterText = QTextEdit(self.tab1)
         self.afterText.setObjectName(u"afterText")
 
-        self.textboxGLayout.addWidget(self.afterText, 0, 1, 1, 1)
+        self.horizontalLayout.addWidget(self.afterText)
 
-        self.beforeText = QTextEdit(self.centralwidget)
+        self.beforeText = QTextEdit(self.tab1)
         self.beforeText.setObjectName(u"beforeText")
 
-        self.textboxGLayout.addWidget(self.beforeText, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.beforeText)
 
+        self.tabWidget.addTab(self.tab1, "")
 
-        self.textboxHLayout.addLayout(self.textboxGLayout)
-
-
-        self.verticalLayout.addLayout(self.textboxHLayout)
+        self.verticalLayout.addWidget(self.tabWidget)
 
         self.baHLayout = QHBoxLayout()
         self.baHLayout.setObjectName(u"baHLayout")
         self.baGLayout = QGridLayout()
         self.baGLayout.setObjectName(u"baGLayout")
-        self.afterLabel = QLabel(self.centralwidget)
-        self.afterLabel.setObjectName(u"afterLabel")
-
-        self.baGLayout.addWidget(self.afterLabel, 0, 1, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
-
         self.beforeLabel = QLabel(self.centralwidget)
         self.beforeLabel.setObjectName(u"beforeLabel")
 
         self.baGLayout.addWidget(self.beforeLabel, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+
+        self.afterLabel = QLabel(self.centralwidget)
+        self.afterLabel.setObjectName(u"afterLabel")
+
+        self.baGLayout.addWidget(self.afterLabel, 0, 1, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
 
 
         self.baHLayout.addLayout(self.baGLayout)
@@ -233,6 +231,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.tabWidget.setCurrentIndex(0)
+
+
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -240,14 +241,14 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.titleLabel.setText(QCoreApplication.translate("MainWindow", u"OBFUSCATOR TOOL", None))
-        self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
         self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
         self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
+        self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
         self.verifyapkButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
-        self.tabButtons.setText(QCoreApplication.translate("MainWindow", u"Tab 1", None))
-        self.afterLabel.setText(QCoreApplication.translate("MainWindow", u"After", None))
+        self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), QCoreApplication.translate("MainWindow", u"Tab 1", None))
         self.beforeLabel.setText(QCoreApplication.translate("MainWindow", u"Before", None))
+        self.afterLabel.setText(QCoreApplication.translate("MainWindow", u"After", None))
         self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
         self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
         self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
