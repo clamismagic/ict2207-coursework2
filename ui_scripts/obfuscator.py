@@ -61,6 +61,7 @@ class Ui_MainWindow(object):
 
         self.apkpathEdit = QLineEdit(self.centralwidget)
         self.apkpathEdit.setObjectName(u"apkpathEdit")
+        self.apkpathEdit.setReadOnly(True)
 
         self.detailsGLayout.addWidget(self.apkpathEdit, 0, 1, 1, 1)
 
