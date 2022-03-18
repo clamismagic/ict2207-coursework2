@@ -47,7 +47,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        if self.apkpathEdit.text() != '' and magic.from_file(self.apkpathEdit.text()) == "Zip archive data":
+        print(magic.from_file(self.apkpathEdit.text()))
+        if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
                 controller.Controller(self.apkpathEdit.text())
                 for x in range(5):

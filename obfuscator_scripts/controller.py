@@ -30,8 +30,12 @@ class Controller:
         :param key_passwd: string that represents the password mapped to the specified key alias
         """
         self.apk_path: str = apk_path
-        self.working_dir_path: str = os.path.join(os.path.dirname(self.apk_path), "decompiled_files")
-        self.output_apk_path: str = os.path.join(os.path.dirname(self.apk_path), "output_files/",
+        self.working_dir_path: str = os.path.join(os.path.dirname(self.apk_path),
+                                                  os.path.splitext(os.path.basename(self.apk_path))[0],
+                                                  "decompiled_files")
+        self.output_apk_path: str = os.path.join(os.path.dirname(self.apk_path),
+                                                 os.path.splitext(os.path.basename(self.apk_path))[0],
+                                                 "output_files/",
                                                  os.path.splitext(os.path.basename(self.apk_path))[0],
                                                  "_obfuscated.apk")
         self.keystore_file: str = keystore_file
