@@ -66,7 +66,7 @@ class Controller:
     def decompile_apk(self):
         # The input apk will be decoded with apktool
         apktools_path = "../tools/apktool.jar"
-        cmd = "java -jar {0} d {1} -o {2}".format(apktools_path, self.apk_path, self.working_dir_path)
+        cmd = "java -jar {0} d \"{1}\" -o \"{2}\" --force".format(apktools_path, self.apk_path, self.working_dir_path)
 
         try:
             print('Running decode command "{0}"'.format(cmd))

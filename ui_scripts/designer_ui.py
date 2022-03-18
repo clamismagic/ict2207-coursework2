@@ -47,29 +47,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        if ( self.apkpathEdit.text() != '' and magic.from_file(self.apkpathEdit.text()) == "Zip archive data"):
+        if self.apkpathEdit.text() != '' and magic.from_file(self.apkpathEdit.text()) == "Zip archive data":
             try:
-                toObfuscate = controller.Controller(self.apkpathEdit.text(), '', '', '', '', '', '')
+                controller.Controller(self.apkpathEdit.text())
                 for x in range(5):
-                    tabWindow = QWidget()
-                    beforeText = QTextEdit()
-                    afterText = QTextEdit()
-                    tabLayout = QHBoxLayout(tabWindow)
-                    tabLayout.addWidget(beforeText)
-                    tabLayout.addWidget(afterText)
+                    tab_window = QWidget(self)
+                    before_text = QTextEdit(self)
+                    after_text = QTextEdit(self)
+                    tab_layout = QHBoxLayout()
+                    tab_layout.addWidget(before_text)
+                    tab_layout.addWidget(after_text)
                     
-                    self.tabWidget.addTab(tabWindow, str(x))
-            except:
-                raise Exception
+                    self.tabWidget.addTab(tab_window, str(x))
+            except Exception as e:
+                print("Error: {0}".format(e))
+                raise
+
         else:
-            messageBox = QMessageBox()
-            messageBox.setStyleSheet(qdarkstyle.load_stylesheet())
-            messageBox.setWindowTitle("Error")
-            messageBox.setText("Incorrect File Provided!")
-            messageBox.exec_()
+            message_box = QMessageBox()
+            message_box.setStyleSheet(qdarkstyle.load_stylesheet())
+            message_box.setWindowTitle("Error")
+            message_box.setText("Incorrect File Provided!")
+            message_box.exec_()
 
-
-            
 
 def main():
 
