@@ -1,6 +1,5 @@
 # imports here
 import helper
-import logging
 import re
 from typing import List
 
@@ -10,7 +9,7 @@ class Obfuscation:
         pass
 
     # obfuscation methods below!!
-    def NOP_obfuscate(self, smali_files: List[str]):
+    def nop_obfuscate(self, smali_files: List[str]):
         print('Running NOP obfuscator')
 
         try:
@@ -40,9 +39,7 @@ class Obfuscation:
 
         except Exception as e:
             print(
-                'Error during execution of "{0}" obfuscator: {1}'.format(
-                    self.__class__.__name__, e
-                )
+                'Error during execution of NOP obfuscator: {0}'.format(e)
             )
             raise
 
