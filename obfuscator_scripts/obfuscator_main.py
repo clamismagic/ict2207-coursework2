@@ -7,44 +7,90 @@ import xml.etree.cElementTree as Xml
 from xml.etree.cElementTree import Element
 
 
-class Obfuscation:
-    def __init__(self):
-        pass
-
-    # obfuscation methods below!!
-    def nop_obfuscate(self, smali_files: List[str]):
-        print('Running NOP obfuscator')
-
-        try:
-            op_codes = helper.get_nop_valid_op_codes()
-            pattern = re.compile(r"\s+(?P<op_code>\S+)")
-
-            for smali_file in smali_files:
-                print(
-                    'Inserting "nop" instructions in file "{0}"'.format(smali_file)
-                )
-                with helper.inplace_edit_file(smali_file) as (in_file, out_file):
-                    for line in in_file:
-
-                        # Print original instruction.
-                        out_file.write(line)
-
-                        # Check if this line contains an op code at the beginning
-                        # of the string.
-                        match = pattern.match(line)
-                        if match:
-                            op_code = match.group("op_code")
-                            # If this is a valid op code, insert some nop instructions
-                            # after it.
-                            if op_code in op_codes:
-                                nop_count = helper.get_random_int(1, 5)
-                                out_file.write("\tnop\n" * nop_count)
-
-        except Exception as e:
+def goto_obfuscator(smali_files: List[str]):
+    try:
+        for smali_file in smali_files:
             print(
-                'Error during execution of NOP obfuscator: {0}'.format(e)
+                'Inserting "goto" instructions in file "{0}"'.format(smali_file)
             )
-            raise
+            with helper.inplace_edit_file(smali_file) as (read_file, write_file):
+                editing_method = False
+                for line in read_file:
+                    if (
+                            line.startswith(".method ")
+                            and " abstract " not in line
+                            and " native " not in line
+                            and not editing_method
+                    ):
+                        # If at the beginning of a non abstract/native method
+                        # (after the .locals instruction), insert a "goto" to the
+                        # label at the end of the method and a label to the first
+                        # instruction of the method.
+                        write_file.write(line)
+                        editing_method = True
+
+                    elif editing_method and helper.locals_pattern.match(line):
+                        write_file.write(line)
+                        write_file.write("\n\tgoto/32 :after_last_instruction\n\n")
+                        write_file.write("\t:before_first_instruction\n")
+
+                    elif line.startswith(".end method") and editing_method:
+                        # If at the end of the method, insert a label after the
+                        # last instruction of the method and a "goto" to the label
+                        # at the beginning of the method. This will not cause an
+                        # endless loop because the method will return at some point
+                        # and the second "goto" won't be called again when the
+                        # method finishes.
+                        write_file.write("\n\t:after_last_instruction\n\n")
+                        write_file.write("\tgoto/32 :before_first_instruction\n\n")
+                        write_file.write(line)
+                        editing_method = False
+
+                    else:
+                        write_file.write(line)
+
+    except Exception as e:
+        print(
+            'Error during execution of goto obfuscator: {0}'.format(e)
+        )
+        raise
+
+
+def nop_obfuscator(smali_files: List[str]):
+    print('Running NOP obfuscator')
+
+    try:
+        op_codes = helper.get_nop_valid_op_codes()
+        pattern = re.compile(r"\s+(?P<op_code>\S+)")
+
+        for smali_file in smali_files:
+            print(
+                'Inserting "nop" instructions in file "{0}"'.format(smali_file)
+            )
+            with helper.inplace_edit_file(smali_file) as (in_file, out_file):
+                for line in in_file:
+
+                    # Print original instruction.
+                    out_file.write(line)
+
+                    # Check if this line contains an op code at the beginning
+                    # of the string.
+                    match = pattern.match(line)
+                    if match:
+                        op_code = match.group("op_code")
+                        # If this is a valid op code, insert some nop instructions
+                        # after it.
+                        if op_code in op_codes:
+                            nop_count = helper.get_random_int(1, 5)
+                            out_file.write("\tnop\n" * nop_count)
+
+    except Exception as e:
+        print(
+            'Error during execution of NOP obfuscator: {0}'.format(e)
+        )
+        raise
+
+# obfuscation methods below!!
 
 #    def indent_xml(self, element: Element, level=0):
 #        indentation = "\n" + level * "    "

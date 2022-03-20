@@ -24,6 +24,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b0d1792e-895a-447d-b539-5d9533a7d86e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obfuscator_scripts/helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/obfuscator_scripts/helper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obfuscator_scripts/obfuscator_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/obfuscator_scripts/obfuscator_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
