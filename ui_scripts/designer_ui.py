@@ -2,6 +2,7 @@
 from email import message
 from http.client import OK
 from tkinter import E, Widget, messagebox
+from tkinter.ttk import Treeview
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
@@ -47,29 +48,24 @@ class MainWindow(QMainWindow, obfuscator.Ui_MainWindow):
 
     def obfuscate(self):
         print(magic.from_file(self.apkpathEdit.text()))
+        
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
-                controller.Controller(self.apkpathEdit.text())
-                for x in range(5):
-                    tab_window = QWidget(self)
-                    before_text = QTextEdit(self)
-                    after_text = QTextEdit(self)
-                    tab_layout = QHBoxLayout()
-                    tab_layout.addWidget(before_text)
-                    tab_layout.addWidget(after_text)
-
-                    self.tabWidget.addTab(tab_window, str(x))
+                o = controller.Controller(self.apkpathEdit.text())
+                
             except Exception as e:
                 print("Error: {0}".format(e))
                 raise
 
         else:
-            message_box = QMessageBox()
-            message_box.setStyleSheet(qdarkstyle.load_stylesheet())
-            message_box.setWindowTitle("Error")
-            message_box.setText("Incorrect File Provided!")
-            message_box.exec_()
+            self.popup("Error", "Incorrect File Provided!")
 
+    def popup(title, message):
+        message_box = QMessageBox()
+        message_box.setStyleSheet(qdarkstyle.load_stylesheet())
+        message_box.setWindowTitle(title)
+        message_box.setText(message)
+        message_box.exec_()
 
 def main():
     # You need one (and only one) QApplication instance per application.
