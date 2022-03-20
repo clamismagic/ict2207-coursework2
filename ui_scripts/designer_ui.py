@@ -46,6 +46,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
+        #self.listWidget.addItem("abc") # add items
+
+        """data = {'col1':['1','2','3','4'], 'col2':['1','2','1','3'], 'col3':['1','1','2','1']}
+        
+        horHeaders = []
+        for n, key in enumerate(sorted(data.keys())):
+            horHeaders.append(key)
+            for m, item in enumerate(data[key]):
+                newitem = QTableWidgetItem(item)
+                self.tableWidget.setItem(m, n, newitem)
+        self.tableWidget.setHorizontalHeaderLabels(horHeaders)
+        
+        self.tableWidget(12, 3, self)
+        table = QTableView(self.tableWidget)"""
+        
         print(magic.from_file(self.apkpathEdit.text()))
         
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):

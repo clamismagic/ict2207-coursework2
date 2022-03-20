@@ -110,15 +110,15 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.listWidget, 1, 0, 1, 1)
 
-        self.tableView = QTableView(self.centralwidget)
-        self.tableView.setObjectName(u"tableView")
+        self.tableWidget = QTableWidget(self.centralwidget)
+        self.tableWidget.setObjectName(u"tableWidget")
         sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy2.setHorizontalStretch(5)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.tableView.sizePolicy().hasHeightForWidth())
-        self.tableView.setSizePolicy(sizePolicy2)
+        sizePolicy2.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy2)
 
-        self.gridLayout.addWidget(self.tableView, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.tableWidget, 1, 1, 1, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout)
