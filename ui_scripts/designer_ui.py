@@ -8,8 +8,7 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
-from obfuscator_scripts import controller
-from ui_scripts import obfuscator
+from obfuscator import Ui_MainWindow
 import os
 import sys
 import qdarkstyle
@@ -24,7 +23,7 @@ def exit_program():
     quit()
 
 
-class MainWindow(QMainWindow, obfuscator.Ui_MainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
