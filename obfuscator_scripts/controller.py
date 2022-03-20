@@ -1,6 +1,7 @@
 # imports here
 import os
 import subprocess
+from obfuscator_main import Obfuscation
 from typing import List, Union
 
 
