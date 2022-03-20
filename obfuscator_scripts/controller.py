@@ -108,6 +108,7 @@ class Controller:
                 )
             )
 
+            print(len(self.smali_files))
             filtered_smali_files = []
 
             for smali_file in self.smali_files:
@@ -144,6 +145,8 @@ class Controller:
 
             # Sort the list of native libraries to always have the list in the same order.
             self.native_lib_files.sort()
+
+            print(len(self.smali_files))
             return
         except subprocess.CalledProcessError as e:
             print(

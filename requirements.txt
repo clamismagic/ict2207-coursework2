@@ -8,6 +8,7 @@ For windows, Prerequisites (Can be installed from WinToInstall folder:
 	Install Apktool
 	Install apksigner
 	Install zipalign
+
 PySide2~=5.15.2.1
 PyQt5~=5.15.6
 QDarkStyle~=3.0.3

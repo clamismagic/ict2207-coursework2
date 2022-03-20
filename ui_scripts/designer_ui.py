@@ -7,17 +7,16 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
-
-import qdarkstyle
-import magic
-from obfuscator import Ui_MainWindow
-
+from obfuscator_scripts import controller
+from .obfuscator import Ui_MainWindow
 import os
 import sys
-script_dir = os.path.dirname( __file__ )
-mymodule_dir = os.path.join( script_dir, '..', 'obfuscator_scripts' )
-sys.path.append( mymodule_dir )
-import controller
+import qdarkstyle
+import magic
+
+script_dir = os.path.dirname(__file__)
+mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
+sys.path.append(mymodule_dir)
 
 
 def exit_program():
@@ -28,7 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        
+
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
         self.actionExit.triggered.connect(exit_program)
@@ -58,7 +57,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     tab_layout = QHBoxLayout()
                     tab_layout.addWidget(before_text)
                     tab_layout.addWidget(after_text)
-                    
+
                     self.tabWidget.addTab(tab_window, str(x))
             except Exception as e:
                 print("Error: {0}".format(e))
@@ -73,7 +72,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 def main():
-
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
     # If you know you won't use command line arguments QApplication([]) works too.
@@ -89,4 +87,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
