@@ -11,7 +11,8 @@ class Obfuscator:
     def __init__(self):
         # TODO: implement checklist for obfuscator selection
         self.op_codes = helper.get_nop_valid_op_codes()
-        self.pattern = re.compile(r"\s+(?P<op_code>\S+)")
+        self.class_name = helper.get
+        self.pattern = re.compile(r"\s+(?P<op_code>\S+)") #can try r'^([ ]*)(?P<opCode>([^ ]+)
         self.locals_pattern = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
 
     def nop_obfuscator(self, smali_file: str):
@@ -33,7 +34,7 @@ class Obfuscator:
                         # If this is a valid op code, insert some nop instructions
                         # after it.
                         if op_code in self.op_codes:
-                            nop_count = helper.get_random_int(1, 5)
+                            nop_count = helper.get_random_int(1, 5) #Randomize the number of nop(s)
                             out_file.write("\tnop\n" * nop_count)
 
         except Exception as e:
@@ -85,6 +86,30 @@ class Obfuscator:
         except Exception as e:
             print(
                 'Error during execution of goto obfuscator: {0}'.format(e)
+            )
+            raise
+
+    def method_rename(self, smali_file: str):
+        try:
+            print(
+                'Renaming methods in file "{0}"'.format(smali_file)
+            )
+
+        except Exception as e:
+            print(
+            'Error during execution of method renaming: {0}'.format(e)
+            )
+            raise
+
+    def opaque_predicate(self, smali_file: str):
+        try:
+            print(
+                'Inserting opaque predicate expressions in file "{0}"'.format(smali_file)
+            )
+
+        except Exception as e:
+            print(
+            'Error during execution of opaque predicate expressions: {0}'.format(e)
             )
             raise
 
