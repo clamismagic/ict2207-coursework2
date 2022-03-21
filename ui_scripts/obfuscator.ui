@@ -19,26 +19,10 @@
      <layout class="QHBoxLayout" name="detailsHLayout">
       <item>
        <layout class="QGridLayout" name="detailsGLayout">
-        <item row="0" column="3" colspan="2">
-         <widget class="QPushButton" name="apkbrowseButton">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>23</height>
-           </size>
-          </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="apkpathLabel">
           <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="projectnameEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="projectnameLabel">
-          <property name="text">
-           <string>Project Name: </string>
+           <string>APK Path: </string>
           </property>
          </widget>
         </item>
@@ -49,7 +33,23 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="5" rowspan="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <item row="0" column="2" rowspan="2">
+         <widget class="QPushButton" name="apkbrowseButton">
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="projectnameEdit"/>
+        </item>
+        <item row="0" column="3" rowspan="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
          <widget class="QPushButton" name="obfuscateButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -68,23 +68,10 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="verifyapkButton">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>23</height>
-           </size>
-          </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="projectnameLabel">
           <property name="text">
-           <string>Verify</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="apkpathLabel">
-          <property name="text">
-           <string>APK Path: </string>
+           <string>Project Name: </string>
           </property>
          </widget>
         </item>
@@ -160,6 +147,9 @@
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
         <attribute name="verticalHeaderCascadingSectionResizes">
          <bool>false</bool>
         </attribute>
@@ -207,19 +197,8 @@
         <item row="0" column="4">
          <widget class="QLineEdit" name="keyaliasEdit"/>
         </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="aliaspassLabel">
-          <property name="text">
-           <string>Alias Password: </string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="keyaliasLabel">
-          <property name="text">
-           <string>Keystore Alias: </string>
-          </property>
-         </widget>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="keystorePathEdit"/>
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="keystoreBrowseButton">
@@ -234,16 +213,10 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="5" rowspan="2">
-         <widget class="QPushButton" name="verifykeyButton">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>70</height>
-           </size>
-          </property>
+        <item row="0" column="3">
+         <widget class="QLabel" name="keyaliasLabel">
           <property name="text">
-           <string>Verify</string>
+           <string>Keystore Alias: </string>
           </property>
          </widget>
         </item>
@@ -254,20 +227,17 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="keystorePathEdit"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="keypathLabel">
+        <item row="1" column="3">
+         <widget class="QLabel" name="aliaspassLabel">
           <property name="text">
-           <string>Keystore Path: </string>
+           <string>Alias Password: </string>
           </property>
          </widget>
         </item>
         <item row="1" column="4">
          <widget class="QLineEdit" name="aliaspassEdit"/>
         </item>
-        <item row="0" column="6" rowspan="2">
+        <item row="0" column="5" rowspan="2">
          <widget class="QPushButton" name="buildsignButton">
           <property name="minimumSize">
            <size>
@@ -282,6 +252,13 @@
         </item>
         <item row="1" column="1" colspan="2">
          <widget class="QLineEdit" name="keystorePassEdit"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="keypathLabel">
+          <property name="text">
+           <string>Keystore Path: </string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
