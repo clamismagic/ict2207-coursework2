@@ -9,7 +9,7 @@ from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
-from obfuscator_scripts import controller
+#from obfuscator_scripts import controller
 import os
 import sys
 import qdarkstyle
@@ -18,7 +18,6 @@ import magic
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
 sys.path.append(mymodule_dir)
-
 
 def exit_program():
     quit()
@@ -50,6 +49,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
+
+        #test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
+        #test.exec_()
+
         # self.listWidget.addItem("abc") # add items
         rowPosition = self.tableWidget.rowCount()
 
@@ -60,19 +63,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("hash"))
         self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("1234"))
         self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("4321"))
-
-        """data = {'col1':['1','2','3','4'], 'col2':['1','2','1','3'], 'col3':['1','1','2','1']}
-        
-        horHeaders = []
-        for n, key in enumerate(sorted(data.keys())):
-            horHeaders.append(key)
-            for m, item in enumerate(data[key]):
-                newitem = QTableWidgetItem(item)
-                self.tableWidget.setItem(m, n, newitem)
-        self.tableWidget.setHorizontalHeaderLabels(horHeaders)
-        
-        self.tableWidget(12, 3, self)
-        table = QTableView(self.tableWidget)"""
         
         print(magic.from_file(self.apkpathEdit.text()))
         
@@ -88,7 +78,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.popup("Error", "Incorrect File Provided!")
 
     def popup(title, message):
-        message_box = QMessageBox()
+        message_box = QMessageBox().warning
         message_box.setStyleSheet(qdarkstyle.load_stylesheet())
         message_box.setWindowTitle(title)
         message_box.setText(message)

@@ -24,46 +24,31 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.titleHLayout = QHBoxLayout()
-        self.titleHLayout.setObjectName(u"titleHLayout")
-        self.titleLabel = QLabel(self.centralwidget)
-        self.titleLabel.setObjectName(u"titleLabel")
-        font = QFont()
-        font.setPointSize(14)
-        font.setBold(True)
-        font.setWeight(75)
-        self.titleLabel.setFont(font)
-
-        self.titleHLayout.addWidget(self.titleLabel)
-
-
-        self.verticalLayout.addLayout(self.titleHLayout)
-
         self.detailsHLayout = QHBoxLayout()
         self.detailsHLayout.setObjectName(u"detailsHLayout")
         self.detailsGLayout = QGridLayout()
         self.detailsGLayout.setObjectName(u"detailsGLayout")
-        self.apkbrowseButton = QPushButton(self.centralwidget)
-        self.apkbrowseButton.setObjectName(u"apkbrowseButton")
-        self.apkbrowseButton.setMinimumSize(QSize(75, 23))
+        self.apkpathLabel = QLabel(self.centralwidget)
+        self.apkpathLabel.setObjectName(u"apkpathLabel")
 
-        self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 3, 1, 2)
-
-        self.projectnameEdit = QLineEdit(self.centralwidget)
-        self.projectnameEdit.setObjectName(u"projectnameEdit")
-
-        self.detailsGLayout.addWidget(self.projectnameEdit, 1, 1, 1, 1)
-
-        self.projectnameLabel = QLabel(self.centralwidget)
-        self.projectnameLabel.setObjectName(u"projectnameLabel")
-
-        self.detailsGLayout.addWidget(self.projectnameLabel, 1, 0, 1, 1)
+        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 1, 1)
 
         self.apkpathEdit = QLineEdit(self.centralwidget)
         self.apkpathEdit.setObjectName(u"apkpathEdit")
         self.apkpathEdit.setReadOnly(True)
 
         self.detailsGLayout.addWidget(self.apkpathEdit, 0, 1, 1, 1)
+
+        self.apkbrowseButton = QPushButton(self.centralwidget)
+        self.apkbrowseButton.setObjectName(u"apkbrowseButton")
+        self.apkbrowseButton.setMinimumSize(QSize(140, 50))
+
+        self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 2, 2, 1)
+
+        self.projectnameEdit = QLineEdit(self.centralwidget)
+        self.projectnameEdit.setObjectName(u"projectnameEdit")
+
+        self.detailsGLayout.addWidget(self.projectnameEdit, 1, 1, 1, 1)
 
         self.obfuscateButton = QPushButton(self.centralwidget)
         self.obfuscateButton.setObjectName(u"obfuscateButton")
@@ -74,18 +59,12 @@ class Ui_MainWindow(object):
         self.obfuscateButton.setSizePolicy(sizePolicy)
         self.obfuscateButton.setMinimumSize(QSize(140, 50))
 
-        self.detailsGLayout.addWidget(self.obfuscateButton, 0, 5, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.detailsGLayout.addWidget(self.obfuscateButton, 0, 3, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
 
-        self.verifyapkButton = QPushButton(self.centralwidget)
-        self.verifyapkButton.setObjectName(u"verifyapkButton")
-        self.verifyapkButton.setMinimumSize(QSize(75, 23))
+        self.projectnameLabel = QLabel(self.centralwidget)
+        self.projectnameLabel.setObjectName(u"projectnameLabel")
 
-        self.detailsGLayout.addWidget(self.verifyapkButton, 0, 2, 1, 1)
-
-        self.apkpathLabel = QLabel(self.centralwidget)
-        self.apkpathLabel.setObjectName(u"apkpathLabel")
-
-        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 1, 1)
+        self.detailsGLayout.addWidget(self.projectnameLabel, 1, 0, 1, 1)
 
 
         self.detailsHLayout.addLayout(self.detailsGLayout)
@@ -93,59 +72,69 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.detailsHLayout)
 
-        self.tabWidget = QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName(u"tabWidget")
-        self.tabWidget.setBaseSize(QSize(0, 0))
-        self.tabWidget.setStyleSheet(u"QTabBar::tab { min-height: 15px; min-width: 50px;}")
-        self.tabWidget.setTabShape(QTabWidget.Rounded)
-        self.tabWidget.setIconSize(QSize(16, 16))
-        self.tabWidget.setDocumentMode(True)
-        self.tabWidget.setTabsClosable(False)
-        self.tabWidget.setTabBarAutoHide(False)
-        self.tab1 = QWidget()
-        self.tab1.setObjectName(u"tab1")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        sizePolicy1.setHorizontalStretch(0)
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.listWidget = QListWidget(self.centralwidget)
+        self.listWidget.setObjectName(u"listWidget")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(1)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.tab1.sizePolicy().hasHeightForWidth())
-        self.tab1.setSizePolicy(sizePolicy1)
-        self.tab1.setMinimumSize(QSize(0, 0))
-        self.tab1.setStyleSheet(u"")
-        self.horizontalLayout = QHBoxLayout(self.tab1)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.afterText = QTextEdit(self.tab1)
-        self.afterText.setObjectName(u"afterText")
+        sizePolicy1.setHeightForWidth(self.listWidget.sizePolicy().hasHeightForWidth())
+        self.listWidget.setSizePolicy(sizePolicy1)
+        self.listWidget.setStyleSheet(u"QListWidget::item { border-bottom: 1px solid gray; opacity: 0.5; padding-top: 5px; padding-bottom: 5px; }")
 
-        self.horizontalLayout.addWidget(self.afterText)
+        self.gridLayout.addWidget(self.listWidget, 1, 0, 1, 1)
 
-        self.beforeText = QTextEdit(self.tab1)
-        self.beforeText.setObjectName(u"beforeText")
+        self.comparisonmetricsLabel = QLabel(self.centralwidget)
+        self.comparisonmetricsLabel.setObjectName(u"comparisonmetricsLabel")
+        font = QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.comparisonmetricsLabel.setFont(font)
 
-        self.horizontalLayout.addWidget(self.beforeText)
+        self.gridLayout.addWidget(self.comparisonmetricsLabel, 0, 1, 1, 1)
 
-        self.tabWidget.addTab(self.tab1, "")
+        self.changedfilesLabel = QLabel(self.centralwidget)
+        self.changedfilesLabel.setObjectName(u"changedfilesLabel")
+        font1 = QFont()
+        font1.setPointSize(8)
+        font1.setBold(True)
+        font1.setWeight(75)
+        self.changedfilesLabel.setFont(font1)
 
-        self.verticalLayout.addWidget(self.tabWidget)
+        self.gridLayout.addWidget(self.changedfilesLabel, 0, 0, 1, 1)
 
-        self.baHLayout = QHBoxLayout()
-        self.baHLayout.setObjectName(u"baHLayout")
-        self.baGLayout = QGridLayout()
-        self.baGLayout.setObjectName(u"baGLayout")
-        self.beforeLabel = QLabel(self.centralwidget)
-        self.beforeLabel.setObjectName(u"beforeLabel")
+        self.tableWidget = QTableWidget(self.centralwidget)
+        if (self.tableWidget.columnCount() < 3):
+            self.tableWidget.setColumnCount(3)
+        __qtablewidgetitem = QTableWidgetItem()
+        __qtablewidgetitem.setFont(font);
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setFont(font);
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        __qtablewidgetitem2.setFont(font);
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.tableWidget.setObjectName(u"tableWidget")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(5)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy2)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.horizontalHeader().setVisible(True)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(100)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
 
-        self.baGLayout.addWidget(self.beforeLabel, 0, 0, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
-
-        self.afterLabel = QLabel(self.centralwidget)
-        self.afterLabel.setObjectName(u"afterLabel")
-
-        self.baGLayout.addWidget(self.afterLabel, 0, 1, 1, 1, Qt.AlignHCenter|Qt.AlignVCenter)
+        self.gridLayout.addWidget(self.tableWidget, 1, 1, 1, 1)
 
 
-        self.baHLayout.addLayout(self.baGLayout)
-
-
-        self.verticalLayout.addLayout(self.baHLayout)
+        self.verticalLayout.addLayout(self.gridLayout)
 
         self.buildHLayout = QHBoxLayout()
         self.buildHLayout.setObjectName(u"buildHLayout")
@@ -156,15 +145,10 @@ class Ui_MainWindow(object):
 
         self.buildGLayout.addWidget(self.keyaliasEdit, 0, 4, 1, 1)
 
-        self.aliaspassLabel = QLabel(self.centralwidget)
-        self.aliaspassLabel.setObjectName(u"aliaspassLabel")
+        self.keystorePathEdit = QLineEdit(self.centralwidget)
+        self.keystorePathEdit.setObjectName(u"keystorePathEdit")
 
-        self.buildGLayout.addWidget(self.aliaspassLabel, 1, 3, 1, 1)
-
-        self.keyaliasLabel = QLabel(self.centralwidget)
-        self.keyaliasLabel.setObjectName(u"keyaliasLabel")
-
-        self.buildGLayout.addWidget(self.keyaliasLabel, 0, 3, 1, 1)
+        self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
 
         self.keystoreBrowseButton = QPushButton(self.centralwidget)
         self.keystoreBrowseButton.setObjectName(u"keystoreBrowseButton")
@@ -172,26 +156,20 @@ class Ui_MainWindow(object):
 
         self.buildGLayout.addWidget(self.keystoreBrowseButton, 0, 2, 1, 1)
 
-        self.verifykeyButton = QPushButton(self.centralwidget)
-        self.verifykeyButton.setObjectName(u"verifykeyButton")
-        self.verifykeyButton.setMinimumSize(QSize(100, 70))
+        self.keyaliasLabel = QLabel(self.centralwidget)
+        self.keyaliasLabel.setObjectName(u"keyaliasLabel")
 
-        self.buildGLayout.addWidget(self.verifykeyButton, 0, 5, 2, 1)
+        self.buildGLayout.addWidget(self.keyaliasLabel, 0, 3, 1, 1)
 
         self.keypassLabel = QLabel(self.centralwidget)
         self.keypassLabel.setObjectName(u"keypassLabel")
 
         self.buildGLayout.addWidget(self.keypassLabel, 1, 0, 1, 1)
 
-        self.keystorePathEdit = QLineEdit(self.centralwidget)
-        self.keystorePathEdit.setObjectName(u"keystorePathEdit")
+        self.aliaspassLabel = QLabel(self.centralwidget)
+        self.aliaspassLabel.setObjectName(u"aliaspassLabel")
 
-        self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
-
-        self.keypathLabel = QLabel(self.centralwidget)
-        self.keypathLabel.setObjectName(u"keypathLabel")
-
-        self.buildGLayout.addWidget(self.keypathLabel, 0, 0, 1, 1)
+        self.buildGLayout.addWidget(self.aliaspassLabel, 1, 3, 1, 1)
 
         self.aliaspassEdit = QLineEdit(self.centralwidget)
         self.aliaspassEdit.setObjectName(u"aliaspassEdit")
@@ -202,12 +180,17 @@ class Ui_MainWindow(object):
         self.buildsignButton.setObjectName(u"buildsignButton")
         self.buildsignButton.setMinimumSize(QSize(100, 70))
 
-        self.buildGLayout.addWidget(self.buildsignButton, 0, 6, 2, 1)
+        self.buildGLayout.addWidget(self.buildsignButton, 0, 5, 2, 1)
 
         self.keystorePassEdit = QLineEdit(self.centralwidget)
         self.keystorePassEdit.setObjectName(u"keystorePassEdit")
 
         self.buildGLayout.addWidget(self.keystorePassEdit, 1, 1, 1, 2)
+
+        self.keypathLabel = QLabel(self.centralwidget)
+        self.keypathLabel.setObjectName(u"keypathLabel")
+
+        self.buildGLayout.addWidget(self.keypathLabel, 0, 0, 1, 1)
 
 
         self.buildHLayout.addLayout(self.buildGLayout)
@@ -232,31 +215,30 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
-
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.titleLabel.setText(QCoreApplication.translate("MainWindow", u"OBFUSCATOR TOOL", None))
-        self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
-        self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
-        self.verifyapkButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
         self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab1), QCoreApplication.translate("MainWindow", u"Tab 1", None))
-        self.beforeLabel.setText(QCoreApplication.translate("MainWindow", u"Before", None))
-        self.afterLabel.setText(QCoreApplication.translate("MainWindow", u"After", None))
-        self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
-        self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
+        self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
+        self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
+        self.comparisonmetricsLabel.setText(QCoreApplication.translate("MainWindow", u"Comparison Metrics", None))
+        self.changedfilesLabel.setText(QCoreApplication.translate("MainWindow", u"List of Changed Files", None))
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Category", None));
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Original", None));
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Obfuscated", None));
         self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.verifykeyButton.setText(QCoreApplication.translate("MainWindow", u"Verify", None))
+        self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
         self.keypassLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Password: ", None))
-        self.keypathLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Path: ", None))
+        self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
         self.buildsignButton.setText(QCoreApplication.translate("MainWindow", u"Build and Sign", None))
+        self.keypathLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Path: ", None))
         self.menuFiles.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
     # retranslateUi
 
