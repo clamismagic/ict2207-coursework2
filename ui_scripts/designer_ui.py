@@ -34,6 +34,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
+        
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -47,6 +50,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def obfuscate(self):
         #self.listWidget.addItem("abc") # add items
+        rowPosition = self.tableWidget.rowCount()
+
+        self.tableWidget.insertRow(rowPosition)
+        self.tableWidget.insertRow(rowPosition)
+        self.tableWidget.insertRow(rowPosition)
+
+        self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("hash"))
+        self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("1234"))
+        self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("4321"))
 
         """data = {'col1':['1','2','3','4'], 'col2':['1','2','1','3'], 'col3':['1','1','2','1']}
         
