@@ -9,6 +9,7 @@ from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
+from obfuscator_scripts import controller
 import os
 import sys
 import qdarkstyle
@@ -49,7 +50,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        #self.listWidget.addItem("abc") # add items
+        # self.listWidget.addItem("abc") # add items
         rowPosition = self.tableWidget.rowCount()
 
         self.tableWidget.insertRow(rowPosition)
@@ -92,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         message_box.setWindowTitle(title)
         message_box.setText(message)
         message_box.exec_()
+
 
 def main():
     # You need one (and only one) QApplication instance per application.

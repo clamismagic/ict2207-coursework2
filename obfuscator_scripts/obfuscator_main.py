@@ -1,5 +1,5 @@
 # imports here
-import helper
+from obfuscator_scripts import helper
 import re
 import random
 from typing import List
@@ -7,9 +7,43 @@ import xml.etree.cElementTree as Xml
 from xml.etree.cElementTree import Element
 
 
-def goto_obfuscator(smali_files: List[str]):
-    try:
-        for smali_file in smali_files:
+class Obfuscator:
+    def __init__(self):
+        # TODO: implement checklist for obfuscator selection
+        self.op_codes = helper.get_nop_valid_op_codes()
+        self.pattern = re.compile(r"\s+(?P<op_code>\S+)")
+        self.locals_pattern = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
+
+    def nop_obfuscator(self, smali_file: str):
+        try:
+            print(
+                'Inserting "nop" instructions in file "{0}"'.format(smali_file)
+            )
+            with helper.inplace_edit_file(smali_file) as (in_file, out_file):
+                for line in in_file:
+
+                    # Print original instruction.
+                    out_file.write(line)
+
+                    # Check if this line contains an op code at the beginning
+                    # of the string.
+                    match = self.pattern.match(line)
+                    if match:
+                        op_code = match.group("op_code")
+                        # If this is a valid op code, insert some nop instructions
+                        # after it.
+                        if op_code in self.op_codes:
+                            nop_count = helper.get_random_int(1, 5)
+                            out_file.write("\tnop\n" * nop_count)
+
+        except Exception as e:
+            print(
+                'Error during execution of NOP obfuscator: {0}'.format(e)
+            )
+            raise
+
+    def goto_obfuscator(self, smali_file: str):
+        try:
             print(
                 'Inserting "goto" instructions in file "{0}"'.format(smali_file)
             )
@@ -29,7 +63,7 @@ def goto_obfuscator(smali_files: List[str]):
                         write_file.write(line)
                         editing_method = True
 
-                    elif editing_method and helper.locals_pattern.match(line):
+                    elif editing_method and self.locals_pattern.match(line):
                         write_file.write(line)
                         write_file.write("\n\tgoto/32 :after_last_instruction\n\n")
                         write_file.write("\t:before_first_instruction\n")
@@ -48,47 +82,11 @@ def goto_obfuscator(smali_files: List[str]):
 
                     else:
                         write_file.write(line)
-
-    except Exception as e:
-        print(
-            'Error during execution of goto obfuscator: {0}'.format(e)
-        )
-        raise
-
-
-def nop_obfuscator(smali_files: List[str]):
-    print('Running NOP obfuscator')
-
-    try:
-        op_codes = helper.get_nop_valid_op_codes()
-        pattern = re.compile(r"\s+(?P<op_code>\S+)")
-
-        for smali_file in smali_files:
+        except Exception as e:
             print(
-                'Inserting "nop" instructions in file "{0}"'.format(smali_file)
+                'Error during execution of goto obfuscator: {0}'.format(e)
             )
-            with helper.inplace_edit_file(smali_file) as (in_file, out_file):
-                for line in in_file:
-
-                    # Print original instruction.
-                    out_file.write(line)
-
-                    # Check if this line contains an op code at the beginning
-                    # of the string.
-                    match = pattern.match(line)
-                    if match:
-                        op_code = match.group("op_code")
-                        # If this is a valid op code, insert some nop instructions
-                        # after it.
-                        if op_code in op_codes:
-                            nop_count = helper.get_random_int(1, 5)
-                            out_file.write("\tnop\n" * nop_count)
-
-    except Exception as e:
-        print(
-            'Error during execution of NOP obfuscator: {0}'.format(e)
-        )
-        raise
+            raise
 
 # obfuscation methods below!!
 

@@ -1,7 +1,7 @@
 # imports here
 import os
 import subprocess
-from obfuscator_main import Obfuscation
+from obfuscator_scripts.obfuscator_main import Obfuscator
 from typing import List, Union
 
 
@@ -46,6 +46,7 @@ class Controller:
         self.manifest_file: Union[str, None] = None
         self.smali_files: List[str] = []
         self.native_lib_files: List[str] = []
+        self.obfuscator = Obfuscator()
 
         # check if specified APK is valid
         if not os.path.isfile(self.apk_path):
@@ -65,6 +66,13 @@ class Controller:
 
         # decompile apk into smali
         self.decompile_apk()
+
+        # obfuscate individual smali files based on user selection
+        for smali_file in self.smali_files:
+            self.obfuscator.nop_obfuscator(smali_file)
+            self.obfuscator.goto_obfuscator(smali_file)
+
+        print("all done!")
 
         return
 
