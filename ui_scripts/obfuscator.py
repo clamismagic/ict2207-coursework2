@@ -179,6 +179,7 @@ class Ui_MainWindow(object):
         self.buildsignButton = QPushButton(self.centralwidget)
         self.buildsignButton.setObjectName(u"buildsignButton")
         self.buildsignButton.setMinimumSize(QSize(100, 70))
+        self.buildsignButton.setFlat(False)
 
         self.buildGLayout.addWidget(self.buildsignButton, 0, 5, 2, 1)
 
