@@ -12,7 +12,7 @@ def get_lines_from_file(file_name: str) -> List[str]:
     try:
         with open(file_name, "r", encoding="utf-8") as file:
             # Return a list with the non blank lines contained in the file.
-            #https://stackoverflow.com/questions/4842057/easiest-way-to-ignore-blank-lines-when-reading-a-file-in-python
+            # https://stackoverflow.com/questions/4842057/easiest-way-to-ignore-blank-lines-when-reading-a-file-in-python
             return list(filter(None, (line.rstrip() for line in file)))
     except Exception as e:
         print('Error during reading file "{0}": {1}'.format(file_name, e))

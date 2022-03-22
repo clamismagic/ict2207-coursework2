@@ -1,5 +1,5 @@
 # imports here
-#from obfuscator_scripts import helper # pycharm
+# from obfuscator_scripts import helper # pycharm
 import helper # vscode
 import re
 import random

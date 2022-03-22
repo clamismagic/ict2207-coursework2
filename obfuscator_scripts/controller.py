@@ -66,7 +66,7 @@ class Controller:
                 raise
 
         # decompile apk into smali
-        self.decompile_apk()
+        self.disassemble_apk()
 
         # obfuscate individual smali files based on user selection
         for smali_file in self.smali_files:
@@ -77,10 +77,12 @@ class Controller:
 
         return
 
-    def decompile_apk(self):
+    def disassemble_apk(self):
         # The input apk will be decoded with apktool
-        apktools_path = "../tools/apktool.jar"
-        cmd = "java -jar {0} d \"{1}\" -o \"{2}\" --force".format(apktools_path, self.apk_path, self.working_dir_path)
+        apktools_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools", "apktool.jar")
+        cmd = "java -jar \"{0}\" d \"{1}\" -o \"{2}\" --force".format(apktools_path,
+                                                                      self.apk_path,
+                                                                      self.working_dir_path)
 
         try:
             print('Running decode command "{0}"'.format(cmd))
