@@ -83,7 +83,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
                 
-                self.add_to_list(o)
+                self.add_to_list(self.o)
                 #self.listWidget.itemClicked.connect(self.tableDisplay)
 
             except Exception as e:
