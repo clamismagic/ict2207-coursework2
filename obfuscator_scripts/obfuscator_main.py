@@ -1,5 +1,6 @@
 # imports here
-from obfuscator_scripts import helper
+#from obfuscator_scripts import helper # pycharm
+import helper # vscode
 import re
 import random
 from typing import List
@@ -10,8 +11,7 @@ from xml.etree.cElementTree import Element
 class Obfuscator:
     def __init__(self):
         # TODO: implement checklist for obfuscator selection
-        self.op_codes = helper.get_nop_valid_op_codes()
-        self.class_name = helper.get
+        self.op_codes = helper.get_nop_op_codes()
         self.pattern = re.compile(r"\s+(?P<op_code>\S+)") #can try r'^([ ]*)(?P<opCode>([^ ]+)
         self.locals_pattern = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
 

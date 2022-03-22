@@ -9,7 +9,7 @@ from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
-#from obfuscator_scripts import controller
+#from obfuscator_scripts import controller # pycharm
 import os
 import sys
 import qdarkstyle
@@ -18,6 +18,7 @@ import magic
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
 sys.path.append(mymodule_dir)
+import controller # vscode
 
 def exit_program():
     quit()

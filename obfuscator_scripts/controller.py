@@ -1,7 +1,8 @@
 # imports here
 import os
 import subprocess
-from obfuscator_scripts.obfuscator_main import Obfuscator
+#from obfuscator_scripts.obfuscator_main import Obfuscator # pycharm
+from obfuscator_main import Obfuscator # vscode
 from typing import List, Union
 
 
