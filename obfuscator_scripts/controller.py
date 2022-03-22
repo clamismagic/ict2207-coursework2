@@ -73,6 +73,8 @@ class Controller:
         for smali_file in self.smali_files:
             self.obfuscator.nop_obfuscator(smali_file)
             self.obfuscator.goto_obfuscator(smali_file)
+            #self.obfuscator.opaque_predicate(smali_file) #uncomment to run opaque predicate (pls work) -GJ
+        
 
         # call to obfuscate Android Manifest based on user selection
         self.obfuscator.rand_manifest(self.manifest_file)

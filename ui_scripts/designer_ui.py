@@ -36,6 +36,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(exit_program)
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
+        
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
         self.listWidget.itemClicked.connect(self.tableDisplay)
         self.buildsignButton.clicked.connect(self.recompile_and_sign)

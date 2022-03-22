@@ -3,6 +3,7 @@ import os
 import random
 import re
 import string
+from string import ascii_letters
 from contextlib import contextmanager
 from hashlib import md5, sha256
 from typing import List
@@ -24,7 +25,9 @@ def get_nop_op_codes() -> List[str]:
         os.path.join(os.path.dirname(__file__), "resources", "nop_op_codes.txt")
     )
 
-
+def get_random_string(length: int) -> str:
+    return "".join(random.choices(string.ascii_letters, k=length))
+    
 @contextmanager
 def inplace_edit_file(file_name: str):
     """
