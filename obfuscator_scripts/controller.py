@@ -37,13 +37,14 @@ class Controller:
                                                   "decompiled_files")
         self.output_apk_path: str = os.path.join(os.path.dirname(self.apk_path),
                                                  os.path.splitext(os.path.basename(self.apk_path))[0],
-                                                 "output_files/",
+                                                 "output_files",
                                                  os.path.splitext(os.path.basename(self.apk_path))[0],
                                                  "_obfuscated.apk")
         self.keystore_file: str = keystore_file
         self.keystore_passwd: str = keystore_passwd
         self.key_alias: str = key_alias
         self.key_passwd: str = key_passwd
+        self.project_root: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
         self.manifest_file: Union[str, None] = None
         self.smali_files: List[str] = []
         self.native_lib_files: List[str] = []
@@ -79,7 +80,7 @@ class Controller:
 
     def disassemble_apk(self):
         # The input apk will be decoded with apktool
-        apktools_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools", "apktool.jar")
+        apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
         cmd = "java -jar \"{0}\" d \"{1}\" -o \"{2}\" --force".format(apktools_path,
                                                                       self.apk_path,
                                                                       self.working_dir_path)
@@ -109,7 +110,7 @@ class Controller:
             ]
 
             # remove known libraries to only grab smali files directly representing the main app
-            with open("../tools/libs_to_ignore.txt", "r", encoding="utf-8") as file:
+            with open(os.path.join(self.project_root, "tools/libs_to_ignore.txt"), "r", encoding="utf-8") as file:
                 read_libs_to_ignore = list(filter(None, (line.rstrip() for line in file)))
 
                 # Normalize paths for the current OS ('.join(x, "")' is used to add a trailing slash).
