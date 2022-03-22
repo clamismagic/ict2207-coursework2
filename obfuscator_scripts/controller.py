@@ -76,10 +76,11 @@ class Controller:
 
         print("all done!")
 
-        # recompile and sign the application
-        # self.recompile_and_sign_apk()
-
+        # end of constructor
         return
+
+    def get_smali_files(self) -> List[str]:
+        return self.smali_files
 
     def disassemble_apk(self):
         # The input apk will be decoded with apktool
