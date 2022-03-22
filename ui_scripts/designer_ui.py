@@ -1,6 +1,7 @@
 # import all for now
 from email import message
 from http.client import OK
+from msilib.schema import ListView
 from tkinter import E, Widget, messagebox
 from tkinter.ttk import Treeview
 from PySide2.QtCore import *
@@ -36,9 +37,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
+        self.listWidget.itemClicked.connect(self.tableDisplay)
+        self.buildsignButton.clicked.connect(self.recompile_and_sign)
+
+        # testing list
+        #self.listWidget.addItem("aaaaaaa")
+        #self.listWidget.addItem("bbbbbbb")
+
+        self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        #self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+
+        self.o: Union[controller.Controller, None] = None
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -55,23 +68,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
         #test.exec_()
 
-        # self.listWidget.addItem("abc") # add items
         rowPosition = self.tableWidget.rowCount()
 
         self.tableWidget.insertRow(rowPosition)
         self.tableWidget.insertRow(rowPosition)
         self.tableWidget.insertRow(rowPosition)
 
-        self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("hash"))
+        self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("hashhashhashhashhash"))
         self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("1234"))
         self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("4321"))
         
-        print(magic.from_file(self.apkpathEdit.text()))
-        
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
-                o = controller.Controller(self.apkpathEdit.text())
+                print(magic.from_file(self.apkpathEdit.text()))
+                self.o = controller.Controller(self.apkpathEdit.text())
                 
+                self.add_to_list(o)
+                #self.listWidget.itemClicked.connect(self.tableDisplay)
+
             except Exception as e:
                 print("Error: {0}".format(e))
                 raise
@@ -79,12 +93,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.popup("Error", "Incorrect File Provided!")
 
-    def popup(title, message):
-        message_box = QMessageBox().warning
-        message_box.setStyleSheet(qdarkstyle.load_stylesheet())
-        message_box.setWindowTitle(title)
-        message_box.setText(message)
-        message_box.exec_()
+    def popup(self, title, message):
+        self.message_box = QMessageBox()
+        self.message_box.setStyleSheet(qdarkstyle.load_stylesheet())
+        self.message_box.setWindowTitle(title)
+        self.message_box.setText(message)
+        self.message_box.exec_()
+
+    def add_to_list(self, o):
+        for smali_file in o.get_smali_files():
+            #self.listWidget.addItem(smali_file)
+            self.listWidget.addItem(smali_file.rsplit("\\", 1)[1])
+
+    def tableDisplay(self):
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.insertRow(self.tableWidget.rowCount())
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, QTableWidgetItem(self.listWidget.currentItem().text()))
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
+
+    def recompile_and_sign(self):
+        if self.keystorePassEdit.text() != '' and self.keystorePathEdit.text() != '' and self.aliaspassEdit.text() != '' and self.keyaliasEdit.text() != '':
+            try:
+                print("test")
+                self.o.recompile_and_sign_apk()
+            except Exception as e:
+                print("Error: {0}".format(e))
+                raise
+
+        else:
+            self.popup("Error", "Incorrect Keystore/Password Provided!")
 
 
 def main():
