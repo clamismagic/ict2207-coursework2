@@ -74,6 +74,9 @@ class Controller:
             self.obfuscator.nop_obfuscator(smali_file)
             self.obfuscator.goto_obfuscator(smali_file)
 
+        # call to obfuscate Android Manifest based on user selection
+        self.obfuscator.rand_manifest(self.manifest_file)
+
         print("all done!")
 
         # end of constructor
@@ -81,6 +84,10 @@ class Controller:
 
     def get_smali_files(self) -> List[str]:
         return self.smali_files
+
+    #Get manifrst_file
+    def get_Android_Manifest(self):
+        return self.manifest_file
 
     def disassemble_apk(self):
         # The input apk will be decoded with apktool

@@ -4,8 +4,6 @@ import helper # vscode
 import re
 import random
 from typing import List
-import xml.etree.cElementTree as Xml
-from xml.etree.cElementTree import Element
 
 
 class Obfuscator:
@@ -113,113 +111,137 @@ class Obfuscator:
             )
             raise
 
-# obfuscation methods below!!
 
-#    def indent_xml(self, element: Element, level=0):
-#        indentation = "\n" + level * "    "
-#        if len(element):
-#            if not element.text or not element.text.strip():
-#                element.text = indentation + "    "
-#            if not element.tail or not element.tail.strip():
-#                element.tail = indentation
-#            for element in element:
-#                self.indent_xml(element, level + 1)
-#            if not element.tail or not element.tail.strip():
-#                element.tail = indentation
-#        else:
-#            if level and (not element.tail or not element.tail.strip()):
-#                element.tail = indentation
-#
-#    def xml_elements_equal(self, one: Element, other: Element) -> bool:
-#        if type(one) != type(other):
-#            return False
-#        if one.tag != other.tag:
-#            return False
-#
-#        if one.text and other.text:
-#            if one.text.strip() != other.text.strip():
-#                return False
-#        elif one.text != other.text:
-#            return False
-#
-#        if one.tail and other.tail:
-#            if one.tail.strip() != other.tail.strip():
-#                return False
-#        elif one.tail != other.tail:
-#            return False
-#
-#        if one.attrib != other.attrib:
-#            return False
-#        if len(one) != len(other):
-#            return False
-#
-#        return all(self.xml_elements_equal(e1, e2) for e1, e2 in zip(one, other))
-#
-#    def remove_xml_duplicates(self, root: Element):
-#
-#        # Recursively eliminate duplicates starting from children nodes.
-#        for element in root:
-#            self.remove_xml_duplicates(element)
-#
-#        non_duplicates = []
-#        elements_to_remove = []
-#
-#        # Find duplicate nodes which have the same parent node.
-#        for element in root:
-#            if any(self.xml_elements_equal(element, nd) for nd in non_duplicates):
-#                elements_to_remove.append(element)
-#            else:
-#                non_duplicates.append(element)
-#
-#        # Remove existing duplicates at this level.
-#        for element_to_remove in elements_to_remove:
-#            root.remove(element_to_remove)
-#
-#    def scramble_xml_element(self, element: Element):
-#        children = []
-#
-#        # Get the children of the current element.
-#        for child in element:
-#            children.append(child)
-#
-#        # Remove the children from the current element (they will be added later
-#        # in a different order).
-#        for child in children:
-#            element.remove(child)
-#
-#        # Shuffle the order of the children of the element and add them again to
-#        # the element. Then repeat the scramble operation recursively.
-#        random.shuffle(children)
-#        for child in children:
-#            element.append(child)
-#            self.scramble_xml_element(child)
-#
-#    def obfuscate(self, xml_file):
-#
-#        try:
-#            '''
-#            # Change default namespace.
-#            Xml.register_namespace(
-#                "obfuscation", "http://schemas.android.com/apk/res/android"
-#            )
-#
-#            xml_parser = Xml.XMLParser(encoding="utf-8")
-#            manifest_tree = Xml.parse(
-#                obfuscation_info.get_manifest_file(), parser=xml_parser
-#            )
-#            '''
-#
-#            manifest_root = xml_file
-#            self.remove_xml_duplicates(manifest_root)
-#            self.scramble_xml_element(manifest_root)
-#            self.indent_xml(manifest_root)
-#
-#            '''
-#            # Write the changes into the manifest file.
-#            manifest_tree.write(obfuscation_info.get_manifest_file(), encoding="utf-8")
-#            '''
-#
-#        except Exception as e:
-#            print ('Error during execution of randManifest_obfuscate: {0}'.format(e))
-#            raise
+    #Random Android Manifest line sequence
+    def rand_manifest(self, AndroidManifest: str):
+        try:
+            print(
+                'Inserting "randomManifest" instructions in file "{0}"'.format(AndroidManifest)
+            )
+            
+            Uses = []               #This list is to store line that start with "<uses"
+            Application = []        #This list is to store lines that met certain critiria and is also a child in the <Application> parent
+            appLineNum = []         #Works together with Application list by storing the line number
+            app_start = 0           #Initilise app_start
+            app_stop = 0            #Initilise app_stop
+            lineNumberList = []     #Works together with Uses list by storing the line number
+            lineNumber = 0          #Initilise lineNumber
 
+            #Get file path and open file to read and write
+            with helper.inplace_edit_file(AndroidManifest) as (in_file, out_file):
+
+                #1st loop to find line that begins with "uses-"
+                for line in in_file:
+                    
+                    #replace all android: to obfuscation:
+                    newLine = line.replace('android:', 'obfuscation:')
+                    line = newLine
+
+                    #Add line that start with     <uses-" and their line number to their respective list
+                    if (line.startswith("    <uses-")):
+                        Uses.append(line)
+                        lineNumberList.append(lineNumber)
+
+                    #To get app_start for the next loop
+                    if (line.startswith("    <application")):
+                        app_start = lineNumber
+                    
+                    #To get app_stop for the next loop
+                    if (line.startswith("    </application>")):
+                        app_stop = lineNumber
+
+                    lineNumber += 1
+
+                #Going back to start of file
+                in_file.seek(0)
+                lineNumber = 0
+
+                #Loop 2 to find line that start with "        <" but not "        <activity" or "        <service" or "        </"
+                for line in in_file:
+
+                    #replace all android: to obfuscation:
+                    newLine = line.replace('android:', 'obfuscation:')
+                    line = newLine
+
+                    #If lineNumber is between <application> parent
+                    if ((lineNumber > app_start) and (lineNumber < app_stop)):
+                        if (
+                            (line.startswith("        <"))
+                            and not (line.startswith("        <activity"))
+                            and not (line.startswith("        <service"))
+                            and not (line.startswith("        </"))
+                        ):
+                            Application.append(line)
+                            appLineNum.append(lineNumber)
+                    
+                    lineNumber += 1
+
+
+                #Shuffle Uses list
+                random.shuffle(Uses)
+
+                #Shuffle Application list
+                random.shuffle(Application)
+
+                #Going back to start of file
+                in_file.seek(0)
+                lineNumber = 0
+
+                #Begins printing in out_file
+                for line in in_file:
+
+                    #Remove the xml information in line 0
+                    if (lineNumber == 0):
+                        line = re.sub('^.*<', '<', line)
+
+                    #replace all "android:" to "obfuscation:"
+                    newLine = line.replace('android:', 'obfuscation:')
+                    line = newLine
+
+                    #This loop manage the line that is after the line that begines with <uses-
+                    #If lineNumberList list is not empty
+                    if lineNumberList:
+
+                        #If the current line nymber is not in the list, do not modify line
+                        if lineNumber != lineNumberList[0]:
+                            out_file.write(line)
+                        
+                        else:
+                            lineNumberList.pop(0)
+                            # Add the first element in the shuffled list of line that begin with "    <uses-"
+                            out_file.write(Uses[0])
+
+                            #If Uses list not empty, remove the first element
+                            if Uses:
+                                Uses.pop(0)
+                    
+                    else:
+
+                        #This loop manage the line that is after the line <application
+                        #If appLineNum list not empty
+                        if appLineNum: 
+
+                            #If the current line nymber is not in the list, do not modify line
+                            if lineNumber != appLineNum[0]:
+                                out_file.write(line)
+
+                            #If line is in the list, replace it with the first element in Application list then remove the first element in appLineNum list
+                            else:
+                                appLineNum.pop(0)
+                                out_file.write(Application[0])
+
+                                #If Application list not empty, remove the first element
+                                if Application:
+                                    Application.pop(0)
+
+                        else:
+                            # if both Appliaiton list and Uses list are empty, print the remaining lines
+                            out_file.write(line)
+                        
+                    lineNumber += 1
+
+        except Exception as e:
+            print(
+                'Error during execution of randomManifest obfuscator: {0}'.format(e)
+            )
+            raise

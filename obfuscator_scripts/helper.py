@@ -79,7 +79,6 @@ def inplace_edit_file(file_name: str):
         except OSError:
             pass
 
-
 def get_random_int(min_int: int, max_int: int) -> int:
     return random.randint(min_int, max_int)
 
