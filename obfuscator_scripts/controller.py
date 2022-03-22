@@ -77,7 +77,7 @@ class Controller:
         print("all done!")
 
         # recompile and sign the application
-        self.recompile_and_sign_apk()
+        # self.recompile_and_sign_apk()
 
         return
 
