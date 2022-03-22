@@ -1,8 +1,8 @@
 # imports here
 import os
 import subprocess
-#from obfuscator_scripts.obfuscator_main import Obfuscator # pycharm
-from obfuscator_main import Obfuscator # vscode
+# from obfuscator_scripts.obfuscator_main import Obfuscator # pycharm
+from obfuscator_main import Obfuscator  # vscode
 from typing import List, Union
 
 
@@ -75,6 +75,9 @@ class Controller:
             self.obfuscator.goto_obfuscator(smali_file)
 
         print("all done!")
+
+        # recompile and sign the application
+        self.recompile_and_sign_apk()
 
         return
 
@@ -171,3 +174,42 @@ class Controller:
         except Exception as e:
             print("Error: {0}".format(e))
             raise
+
+    def recompile_and_sign_apk(self):
+        apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
+        apksigner_path = os.path.join(self.project_root, "tools", "apksigner.bat")
+        cmd_recompile = "java -jar \"{0}\" b --force-all \"{1}\" -o \"{2}\"".format(apktools_path,
+                                                                                    self.working_dir_path,
+                                                                                    self.output_apk_path)
+        cmd_sign = "{0} sign --ks {1} --ks-pass pass:{2} {3}".format(
+            apksigner_path,
+            self.keystore_file,
+            self.keystore_passwd,
+            self.output_apk_path)
+
+        if self.key_alias:
+            cmd_sign += "--ks-key-alias {0} --key-pass pass:{1}".format(self.key_alias, self.key_passwd)
+
+        try:
+            output_recompile = subprocess.check_output(cmd_recompile, stderr=subprocess.STDOUT, input=b"\n").strip()
+
+            if (
+                    b"brut.directory.PathNotExist: " in output_recompile
+                    or b"Exception in thread " in output_recompile
+            ):
+                raise subprocess.CalledProcessError(1, cmd_recompile, output_recompile)
+
+            # check if successfully compiled
+            if not os.path.isfile(self.output_apk_path):
+                raise FileNotFoundError(
+                    'Unable to compile "{0}".\n{1}'.format(
+                        self.output_apk_path, output_recompile.decode(errors="replace")
+                    )
+                )
+
+            # sign recompiled apk
+            subprocess.check_output(cmd_sign, stderr=subprocess.STDOUT).strip()
+        except Exception as e:
+            print("Error during apk compilation: {0}".format(e))
+            raise
+
