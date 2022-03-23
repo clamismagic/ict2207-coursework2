@@ -337,7 +337,7 @@ class Obfuscator:
 
                     #replace all "android:" to "obfuscation:"
                     newLine = line.replace('android:', 'obfuscation:')
-                    line = newLine
+                    line = newLine.replace('xmlns:android', 'xmlns:obfuscation')
 
                     #This loop manage the line that is after the line that begines with <uses-
                     #If lineNumberList list is not empty
