@@ -91,58 +91,17 @@ class Obfuscator:
             )
             raise
 
-    def method_rename(self, smali_file: str):
+    def junk_method(self, smali_file: str): #abit useless
         try:
             print(
-                'Renaming methods in file "{0}"'.format(smali_file)
+                'Junk methods in file "{0}"'.format(smali_file)
             )
-                # get all method names
-            self._method_names: List[str] = self._dissect.method_names(renamable=True)
-
-            # generate a mapping of method names
-            self._method_name_mapping: Dict[str: str] = helper.generate_mapping(self._method_names)
-
-        
-            skip_to_end: bool = False
-            class_name: str = None
-
-            with helper.inplace_file(smali_file) as file:
-                for line in file:
-                    # skip if the "virtual method" line has been reached
-                    if not skip_to_end:
-                        if "# virtual methods" in line: 
-                            skip_to_end = True
-                            file.write(line)
-                            continue
-
-                        # get the class name which is located at the start of each
-                        # smali file
-                        if class_name is None:
-                            match: Match = self.class_pattern.match(line)
-                            class_name = match.group("name")
-
-                        # rename all methods which are elibible to rename
-                        if match := self.method_pattern.match(line):
-                            method: str = match.group("method")
-                            map_name: str = f"{class_name}|{method}"
-                            if map_name in self._method_name_mapping:
-                                line = line.replace(f"{method}(",
-                                                    f"{self._method_name_mapping[map_name]}(")
-
-                    # rename all method invocations which are elibible to rename
-                    if match := self.invoke_pattern.match(line):
-                        invocation: Match = match.group("invocation")
-                        invoke_class_name: Match = match.group("class")
-                        method: str = match.group("method")
-                        map_name: str = f"{invoke_class_name}|{method}"
-                        if (("direct" in invocation
-                                or "static" in invocation)
-                                and map_name in self._method_name_mapping):
-                            line = line.replace(f">{method}(",
-                                                f">{self._method_name_mapping[map_name]}(")
-
-                    file.write(line)
-
+            """add to each smali class file the junk method"""
+            with helper.inplace_edit_file(smali_file) as (in_file, out_file):
+                for line in in_file:
+                    out_file.write(line)
+                    if re.search(r'^([ ]*?)# direct methods', line) is not None:  # At the top of the direct methods section
+                        out_file.write(helper.get_junk_method("junkMethod.txt"))  # add the junk method
         except Exception as e:
             print(
             'Error during execution of method renaming: {0}'.format(e)

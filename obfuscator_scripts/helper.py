@@ -85,3 +85,13 @@ def inplace_edit_file(file_name: str):
 def get_random_int(min_int: int, max_int: int) -> int:
     return random.randint(min_int, max_int)
 
+
+def get_junk_method(file_name: str):  # Return the junk method
+    try:
+
+        new_file_name = os.path.join(os.path.dirname(__file__), "resources", file_name)
+        with open(new_file_name, "r", encoding="utf-8") as file:
+            return file.read()
+    except Exception as e:
+        print('Error during reading file "{0}": {1}'.format(file_name, e))
+        raise
