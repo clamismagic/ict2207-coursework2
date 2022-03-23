@@ -98,16 +98,6 @@ sput-boolean
 sput-byte
 sput-char
 sput-short
-invoke-virtual
-invoke-super
-invoke-direct
-invoke-static
-invoke-interface
-invoke-virtual/range
-invoke-super/range
-invoke-direct/range
-invoke-static/range
-invoke-interface/range
 neg-int
 not-int
 neg-long
