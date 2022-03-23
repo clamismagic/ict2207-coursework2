@@ -3,7 +3,7 @@
 import helper # vscode
 import re
 import random
-from typing import List
+from typing import List, Dict, Match
 
 
 class Obfuscator:
@@ -13,7 +13,10 @@ class Obfuscator:
         self.pattern = re.compile(r"\s+(?P<op_code>\S+)") #can try r'^([ ]*)(?P<opCode>([^ ]+)
         self.locals_pattern = re.compile(r"\s+\.locals\s(?P<local_count>\d+)")
         self.label_pattern = re.compile(r"^[ ]{4}(?P<name>:.+)")
-
+        self.class_pattern = re.compile(r"\.class.+?(?P<name>\S+?;)")
+        self.method_patten = re.compile(r"\.method.+?(?P<method>\S+?)" + r"\((?P<args>\S*?)\)" + r"(?P<return>\S+)")
+        self.invoke_pattern = re.compile(r"^[ ]{4}(?P<invocation>invoke-\S+)\s"r"{(?P<variables>[0-9pv.,\s]*)},\s"r"(?P<class>\S+?)"r"->(?P<method>\S+?)"r"\((?P<args>\S*?)\)"r"(?P<return_type>\S+)")
+    
     def nop_obfuscator(self, smali_file: str):
         try:
             print(
@@ -93,6 +96,52 @@ class Obfuscator:
             print(
                 'Renaming methods in file "{0}"'.format(smali_file)
             )
+                # get all method names
+            self._method_names: List[str] = self._dissect.method_names(renamable=True)
+
+            # generate a mapping of method names
+            self._method_name_mapping: Dict[str: str] = helper.generate_mapping(self._method_names)
+
+        
+            skip_to_end: bool = False
+            class_name: str = None
+
+            with helper.inplace_file(smali_file) as file:
+                for line in file:
+                    # skip if the "virtual method" line has been reached
+                    if not skip_to_end:
+                        if "# virtual methods" in line: 
+                            skip_to_end = True
+                            file.write(line)
+                            continue
+
+                        # get the class name which is located at the start of each
+                        # smali file
+                        if class_name is None:
+                            match: Match = self.class_pattern.match(line)
+                            class_name = match.group("name")
+
+                        # rename all methods which are elibible to rename
+                        if match := self.method_pattern.match(line):
+                            method: str = match.group("method")
+                            map_name: str = f"{class_name}|{method}"
+                            if map_name in self._method_name_mapping:
+                                line = line.replace(f"{method}(",
+                                                    f"{self._method_name_mapping[map_name]}(")
+
+                    # rename all method invocations which are elibible to rename
+                    if match := self.invoke_pattern.match(line):
+                        invocation: Match = match.group("invocation")
+                        invoke_class_name: Match = match.group("class")
+                        method: str = match.group("method")
+                        map_name: str = f"{invoke_class_name}|{method}"
+                        if (("direct" in invocation
+                                or "static" in invocation)
+                                and map_name in self._method_name_mapping):
+                            line = line.replace(f">{method}(",
+                                                f">{self._method_name_mapping[map_name]}(")
+
+                    file.write(line)
 
         except Exception as e:
             print(
