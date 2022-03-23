@@ -10,7 +10,7 @@ from PySide2.QtGui import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
-# from obfuscator_scripts import controller # pycharm
+from typing import List, Union
 import os
 import sys
 import qdarkstyle
@@ -83,6 +83,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
+
+                # decompile apk into smali
+                self.o.disassemble_apk()
+
+                # obfuscate smali files
+                self.o.obfuscate_smali()
                 
                 self.add_to_list(self.o)
                 #self.listWidget.itemClicked.connect(self.tableDisplay)

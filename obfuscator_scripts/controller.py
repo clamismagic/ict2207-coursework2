@@ -1,7 +1,6 @@
 # imports here
 import os
 import subprocess
-# from obfuscator_scripts.obfuscator_main import Obfuscator # pycharm
 from obfuscator_main import Obfuscator  # vscode
 from typing import List, Union
 
@@ -65,21 +64,6 @@ class Controller:
                     )
                 )
                 raise
-
-        # decompile apk into smali
-        self.disassemble_apk()
-
-        # obfuscate individual smali files based on user selection
-        for smali_file in self.smali_files:
-            self.obfuscator.nop_obfuscator(smali_file)
-            self.obfuscator.goto_obfuscator(smali_file)
-            #self.obfuscator.opaque_predicate(smali_file) #uncomment to run opaque predicate (pls work) -GJ
-        
-
-        # call to obfuscate Android Manifest based on user selection
-        self.obfuscator.rand_manifest(self.manifest_file)
-
-        print("all done!")
 
         # end of constructor
         return
@@ -184,6 +168,18 @@ class Controller:
         except Exception as e:
             print("Error: {0}".format(e))
             raise
+
+    def obfuscate_smali(self):
+        # obfuscate individual smali files based on user selection
+        for smali_file in self.smali_files:
+            self.obfuscator.nop_obfuscator(smali_file)
+            self.obfuscator.goto_obfuscator(smali_file)
+            self.obfuscator.opaque_predicate(smali_file)  # uncomment to run opaque predicate (pls work) -GJ
+
+        # call to obfuscate Android Manifest based on user selection
+        self.obfuscator.rand_manifest(self.manifest_file)
+
+        print("all done!")
 
     def recompile_and_sign_apk(self):
         apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
