@@ -15,6 +15,8 @@ import os
 import sys
 import qdarkstyle
 import magic
+import threading
+import hashlib
 
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
@@ -32,10 +34,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.setStyleSheet(qdarkstyle.load_stylesheet())
-
-        self.actionExit.triggered.connect(exit_program)
-        self.apkbrowseButton.clicked.connect(self.apk_browse)
-        self.obfuscateButton.clicked.connect(self.obfuscate)
         
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
         self.listWidget.itemClicked.connect(self.tableDisplay)
@@ -54,6 +52,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.o: Union[controller.Controller, None] = None
 
+        self.actionExit.triggered.connect(exit_program)
+        self.apkbrowseButton.clicked.connect(self.apk_browse)
+        self.obfuscateButton.clicked.connect(self.obfuscate)
+
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
         # print(file_path[0])
@@ -65,22 +67,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-
         #test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
         #test.exec_()
 
         rowPosition = self.tableWidget.rowCount()
 
-        self.tableWidget.insertRow(rowPosition)
-        self.tableWidget.insertRow(rowPosition)
-        self.tableWidget.insertRow(rowPosition)
-
-        self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("hashhashhashhashhash"))
-        self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("1234"))
-        self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("4321"))
+        #self.tableWidget.insertRow(rowPosition)
+        #self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("category"))
+        #self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("original"))
+        #self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("obfuscated"))
         
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
+                self.thread = QThread()
+                self.thread.start()
+
+                # get apk hash
+                beforeHash = hashlib.sha256()
+                with open(self.apkpathEdit.text(),"rb") as f:
+                    for byte_block in iter(lambda: f.read(4096),b""):
+                        beforeHash.update(byte_block)
+
+                self.tableWidget.insertRow(rowPosition)
+                self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("SHA256"))
+                self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(beforeHash.hexdigest()))
+
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
 
@@ -130,7 +141,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.popup("Error", "Incorrect Keystore/Password Provided!")
-
 
 def main():
     # You need one (and only one) QApplication instance per application.
