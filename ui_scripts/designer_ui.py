@@ -6,8 +6,8 @@ from tkinter import E, Widget, messagebox
 from tkinter.ttk import Treeview
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PySide2.QtGui import *
-from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
 from typing import List, Union
@@ -28,6 +28,32 @@ def exit_program():
     quit()
 
 
+class Worker(QObject):
+    def __init__(self, controller: controller.Controller):
+        super().__init__()
+        self.controller: controller.Controller = controller
+
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+
+    def run(self):
+        # decompile apk into smali
+        self.controller.disassemble_apk()
+
+        # obfuscate smali files
+        counter = 0
+        self.controller.obfuscate_manifest()
+        counter += 1
+        self.progress.emit(counter)
+        for smali_file in self.controller.smali_files:
+            self.controller.obfuscate_smali(smali_file)
+            counter += 1
+            self.progress.emit(counter)
+            print(f"counter: {counter}")
+
+        self.finished.emit()
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -40,16 +66,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.buildsignButton.clicked.connect(self.recompile_and_sign)
 
         # testing list
-        #self.listWidget.addItem("aaaaaaa")
-        #self.listWidget.addItem("bbbbbbb")
+        # self.listWidget.addItem("aaaaaaa")
+        # self.listWidget.addItem("bbbbbbb")
 
         self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        #self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
+        self.thread: QThread = QThread()
+        self.worker_thread: Union[Worker, None] = None
         self.o: Union[controller.Controller, None] = None
 
         self.actionExit.triggered.connect(exit_program)
@@ -67,42 +95,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        #test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
-        #test.exec_()
+        # test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
+        # test.exec_()
 
-        rowPosition = self.tableWidget.rowCount()
+        row_position = self.tableWidget.rowCount()
 
-        #self.tableWidget.insertRow(rowPosition)
-        #self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("category"))
-        #self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem("original"))
-        #self.tableWidget.setItem(rowPosition, 2, QTableWidgetItem("obfuscated"))
+        # self.tableWidget.insertRow(row_position)
+        # self.tableWidget.setItem(row_position, 0, QTableWidgetItem("category"))
+        # self.tableWidget.setItem(row_position, 1, QTableWidgetItem("original"))
+        # self.tableWidget.setItem(row_position, 2, QTableWidgetItem("obfuscated"))
         
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
-                self.thread = QThread()
-                self.thread.start()
-
                 # get apk hash
-                beforeHash = hashlib.sha256()
+                before_hash = hashlib.sha256()
                 with open(self.apkpathEdit.text(),"rb") as f:
                     for byte_block in iter(lambda: f.read(4096),b""):
-                        beforeHash.update(byte_block)
+                        before_hash.update(byte_block)
 
-                self.tableWidget.insertRow(rowPosition)
-                self.tableWidget.setItem(rowPosition, 0, QTableWidgetItem("SHA256"))
-                self.tableWidget.setItem(rowPosition, 1, QTableWidgetItem(beforeHash.hexdigest()))
+                self.tableWidget.insertRow(row_position)
+                self.tableWidget.setItem(row_position, 0, QTableWidgetItem("SHA256"))
+                self.tableWidget.setItem(row_position, 1, QTableWidgetItem(before_hash.hexdigest()))
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
+                self.worker_thread = Worker(self.o)
 
-                # decompile apk into smali
-                self.o.disassemble_apk()
-
-                # obfuscate smali files
-                self.o.obfuscate_smali()
+                self.worker_thread.moveToThread(self.thread)
+                self.thread.started.connect(self.worker_thread.run)
+                self.worker_thread.finished.connect(self.thread.quit)
+                self.worker_thread.finished.connect(self.worker_thread.deleteLater)
+                self.thread.finished.connect(self.thread.deleteLater)
+                self.worker_thread.progress.connect(self.increase_loading_bar)
+                self.thread.start()
                 
                 self.add_to_list(self.o)
-                #self.listWidget.itemClicked.connect(self.tableDisplay)
+                # self.listWidget.itemClicked.connect(self.tableDisplay)
 
             except Exception as e:
                 print("Error: {0}".format(e))
@@ -110,6 +138,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.popup("Error", "Incorrect File Provided!")
+
+    def increase_loading_bar(self, inc: int):
+        print(f"incrementing loading bar: {inc}")
 
     def popup(self, title, message):
         self.message_box = QMessageBox()
@@ -141,6 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.popup("Error", "Incorrect Keystore/Password Provided!")
+
 
 def main():
     # You need one (and only one) QApplication instance per application.

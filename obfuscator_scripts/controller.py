@@ -169,18 +169,16 @@ class Controller:
             print("Error: {0}".format(e))
             raise
 
-    def obfuscate_smali(self):
+    def obfuscate_smali(self, smali_file: str):
         # obfuscate individual smali files based on user selection
-        for smali_file in self.smali_files:
-            self.obfuscator.nop_obfuscator(smali_file)
-            self.obfuscator.goto_obfuscator(smali_file)
-            self.obfuscator.opaque_predicate(smali_file)  # uncomment to run opaque predicate (pls work) -GJ
-            self.obfuscator.junk_method(smali_file)  # uncomment to run junk method -GJ
-            
+        self.obfuscator.nop_obfuscator(smali_file)
+        self.obfuscator.goto_obfuscator(smali_file)
+        self.obfuscator.opaque_predicate(smali_file)  # uncomment to run opaque predicate (pls work) -GJ
+        self.obfuscator.junk_method(smali_file)  # uncomment to run junk method -GJ
+
+    def obfuscate_manifest(self):
         # call to obfuscate Android Manifest based on user selection
         self.obfuscator.rand_manifest(self.manifest_file)
-
-        print("all done!")
 
     def recompile_and_sign_apk(self):
         apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
