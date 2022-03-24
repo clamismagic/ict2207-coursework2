@@ -62,7 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setStyleSheet(qdarkstyle.load_stylesheet())
         
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
-        self.listWidget.itemClicked.connect(self.tableDisplay)
+        self.listWidget.itemClicked.connect(self.table_display)
         self.buildsignButton.clicked.connect(self.recompile_and_sign)
 
         # testing list
@@ -75,6 +75,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.message_box: Union[QThread, None] = None
 
         self.thread: QThread = QThread()
         self.worker_thread: Union[Worker, None] = None
@@ -130,7 +131,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.thread.start()
                 
                 self.add_to_list(self.o)
-                # self.listWidget.itemClicked.connect(self.tableDisplay)
+                # self.listWidget.itemClicked.connect(self.table_display)
 
             except Exception as e:
                 print("Error: {0}".format(e))
@@ -142,27 +143,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def increase_loading_bar(self, inc: int):
         print(f"incrementing loading bar: {inc}")
 
-    def popup(self, title, message):
+    def popup(self, title, popup_message):
         self.message_box = QMessageBox()
         self.message_box.setStyleSheet(qdarkstyle.load_stylesheet())
         self.message_box.setWindowTitle(title)
-        self.message_box.setText(message)
+        self.message_box.setText(popup_message)
         self.message_box.exec_()
 
     def add_to_list(self, o):
         for smali_file in o.get_smali_files():
-            #self.listWidget.addItem(smali_file)
+            # self.listWidget.addItem(smali_file)
             self.listWidget.addItem(smali_file.rsplit("\\", 1)[1])
 
-    def tableDisplay(self):
+    def table_display(self):
         self.tableWidget.setRowCount(0)
         self.tableWidget.insertRow(self.tableWidget.rowCount())
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0, QTableWidgetItem(self.listWidget.currentItem().text()))
+        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0,
+                                 QTableWidgetItem(self.listWidget.currentItem().text()))
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
 
     def recompile_and_sign(self):
-        if self.keystorePassEdit.text() != '' and self.keystorePathEdit.text() != '' and self.aliaspassEdit.text() != '' and self.keyaliasEdit.text() != '':
+        if self.keystorePassEdit.text() != ''\
+                and self.keystorePathEdit.text() != ''\
+                and self.aliaspassEdit.text() != ''\
+                and self.keyaliasEdit.text() != '':
             try:
                 print("test")
                 self.o.recompile_and_sign_apk()
