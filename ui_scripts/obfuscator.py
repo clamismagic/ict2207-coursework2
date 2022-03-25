@@ -28,27 +28,11 @@ class Ui_MainWindow(object):
         self.detailsHLayout.setObjectName(u"detailsHLayout")
         self.detailsGLayout = QGridLayout()
         self.detailsGLayout.setObjectName(u"detailsGLayout")
-        self.apkpathLabel = QLabel(self.centralwidget)
-        self.apkpathLabel.setObjectName(u"apkpathLabel")
-
-        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 1, 1)
-
-        self.apkpathEdit = QLineEdit(self.centralwidget)
-        self.apkpathEdit.setObjectName(u"apkpathEdit")
-        self.apkpathEdit.setReadOnly(True)
-
-        self.detailsGLayout.addWidget(self.apkpathEdit, 0, 1, 1, 1)
-
         self.apkbrowseButton = QPushButton(self.centralwidget)
         self.apkbrowseButton.setObjectName(u"apkbrowseButton")
-        self.apkbrowseButton.setMinimumSize(QSize(140, 50))
+        self.apkbrowseButton.setMinimumSize(QSize(140, 25))
 
         self.detailsGLayout.addWidget(self.apkbrowseButton, 0, 2, 2, 1)
-
-        self.projectnameEdit = QLineEdit(self.centralwidget)
-        self.projectnameEdit.setObjectName(u"projectnameEdit")
-
-        self.detailsGLayout.addWidget(self.projectnameEdit, 1, 1, 1, 1)
 
         self.obfuscateButton = QPushButton(self.centralwidget)
         self.obfuscateButton.setObjectName(u"obfuscateButton")
@@ -57,14 +41,20 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.obfuscateButton.sizePolicy().hasHeightForWidth())
         self.obfuscateButton.setSizePolicy(sizePolicy)
-        self.obfuscateButton.setMinimumSize(QSize(140, 50))
+        self.obfuscateButton.setMinimumSize(QSize(140, 25))
 
         self.detailsGLayout.addWidget(self.obfuscateButton, 0, 3, 2, 1, Qt.AlignHCenter|Qt.AlignVCenter)
 
-        self.projectnameLabel = QLabel(self.centralwidget)
-        self.projectnameLabel.setObjectName(u"projectnameLabel")
+        self.apkpathLabel = QLabel(self.centralwidget)
+        self.apkpathLabel.setObjectName(u"apkpathLabel")
 
-        self.detailsGLayout.addWidget(self.projectnameLabel, 1, 0, 1, 1)
+        self.detailsGLayout.addWidget(self.apkpathLabel, 0, 0, 2, 1)
+
+        self.apkpathEdit = QLineEdit(self.centralwidget)
+        self.apkpathEdit.setObjectName(u"apkpathEdit")
+        self.apkpathEdit.setReadOnly(True)
+
+        self.detailsGLayout.addWidget(self.apkpathEdit, 0, 1, 2, 1)
 
 
         self.detailsHLayout.addLayout(self.detailsGLayout)
@@ -222,10 +212,9 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
         self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
-        self.projectnameLabel.setText(QCoreApplication.translate("MainWindow", u"Project Name: ", None))
+        self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
         self.comparisonmetricsLabel.setText(QCoreApplication.translate("MainWindow", u"Comparison Metrics", None))
         self.changedfilesLabel.setText(QCoreApplication.translate("MainWindow", u"List of Changed Files", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
