@@ -17,6 +17,8 @@ import qdarkstyle
 import magic
 import threading
 import hashlib
+import time
+import re
 
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
@@ -67,7 +69,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setStyleSheet(qdarkstyle.load_stylesheet())
         
         self.keystoreBrowseButton.clicked.connect(self.keystore_browse)
-        self.listWidget.itemClicked.connect(self.table_display)
+        self.listWidget.itemClicked.connect(self.compare_file)
         self.buildsignButton.clicked.connect(self.recompile_and_sign)
 
         # testing list
@@ -90,7 +92,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
 
-        self.progress_window: Union[QMessageBox, None] = None
+        self.progress_bar_window: Union[QMessageBox, None] = None
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -103,9 +105,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        # test = QMessageBox.information(self, 'Decompiling & Obfuscating...')
-        # test.exec_()
-
         row_position = self.tableWidget.rowCount()
 
         # self.tableWidget.insertRow(row_position)
@@ -120,10 +119,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 with open(self.apkpathEdit.text(),"rb") as f:
                     for byte_block in iter(lambda: f.read(4096),b""):
                         before_hash.update(byte_block)
-
+                
                 self.tableWidget.insertRow(row_position)
                 self.tableWidget.setItem(row_position, 0, QTableWidgetItem("SHA256"))
                 self.tableWidget.setItem(row_position, 1, QTableWidgetItem(before_hash.hexdigest()))
+
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
@@ -136,6 +136,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.thread.finished.connect(self.thread.deleteLater)
                 self.worker_thread.progress.connect(self.increase_loading_bar)
                 self.thread.start()
+
+                self.progress_window()
                 
                 # self.listWidget.itemClicked.connect(self.table_display)
 
@@ -146,8 +148,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.popup("Error", "Incorrect File Provided!")
 
+    def progress_window(self):
+        self.progress_window = QMessageBox()
+        self.progress_window.setStyleSheet(qdarkstyle.load_stylesheet())
+        self.progress_window.setText("Number of files decompiled & obfuscated: 0")
+        self.progress_window.setWindowTitle("Loading")
+        self.progress_window.exec_()
+
     def increase_loading_bar(self, inc: int):
-        print(f"incrementing loading bar: {inc}")
+        self.progress_window.setText("Number of files decompiled & obfuscated: " + str(inc))
+        #return inc
+        print(inc)
+        #print(f"incrementing loading bar: {inc}")
 
     def popup(self, title, popup_message):
         self.message_box = QMessageBox()
@@ -163,6 +175,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                  QTableWidgetItem(self.listWidget.currentItem().text()))
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
         self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
+
+    def compare_file(self):
+        self.compare_box = QMessageBox()
+        #self.compare_box_layout = QHBoxLayout()
+        #self.before_text = QPlainTextEdit()
+        #self.after_text = QPlainTextEdit()
+
+        #self.before_text.appendPlainText("aaa")
+        #self.after_text.appendPlainText("bbb")
+        
+        self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
+        filelist = self.o.get_smali_files()
+        r = re.compile("\\"+self.listWidget.currentItem().text())
+        newlist = list(filter(r.match, filelist))
+        print(r)
+        print(newlist)
+        #self.compare_box.setLayout(self.compare_box_layout)
+        with open((os.path.dirname(self.o.working_dir_path) + "/" + self.listWidget.currentItem().text()), 'r') as file:
+            text = file.read().replace('\n', '')
+        self.compare_box.setText(text)
+        self.compare_box.setWindowTitle(self.listWidget.currentItem().text())
+        #self.compare_box_layout.addWidget(self.before_text)
+        #self.compare_box_layout.addWidget(self.after_text)
+        self.compare_box.exec_()
 
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\
@@ -196,3 +232,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
