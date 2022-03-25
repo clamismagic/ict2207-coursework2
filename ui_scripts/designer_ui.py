@@ -29,9 +29,10 @@ def exit_program():
 
 
 class Worker(QObject):
-    def __init__(self, controller: controller.Controller):
+    def __init__(self, controller: controller.Controller, list_widget: QListWidget):
         super().__init__()
         self.controller: controller.Controller = controller
+        self.list_widget: QListWidget = list_widget
 
     finished = pyqtSignal()
     progress = pyqtSignal(int)
@@ -50,8 +51,12 @@ class Worker(QObject):
             counter += 1
             self.progress.emit(counter)
             print(f"counter: {counter}")
+            self.add_to_list(smali_file)
 
         self.finished.emit()
+
+    def add_to_list(self, smali_file: str):
+        self.list_widget.addItem(smali_file.rsplit("\\", 1)[1])
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -84,6 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(exit_program)
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
+
+        self.progress_window: Union[QMessageBox, None] = None
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -120,7 +127,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
-                self.worker_thread = Worker(self.o)
+                self.worker_thread = Worker(self.o, self.listWidget)
 
                 self.worker_thread.moveToThread(self.thread)
                 self.thread.started.connect(self.worker_thread.run)
@@ -130,7 +137,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.worker_thread.progress.connect(self.increase_loading_bar)
                 self.thread.start()
                 
-                self.add_to_list(self.o)
                 # self.listWidget.itemClicked.connect(self.table_display)
 
             except Exception as e:
@@ -149,11 +155,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.message_box.setWindowTitle(title)
         self.message_box.setText(popup_message)
         self.message_box.exec_()
-
-    def add_to_list(self, o):
-        for smali_file in o.get_smali_files():
-            # self.listWidget.addItem(smali_file)
-            self.listWidget.addItem(smali_file.rsplit("\\", 1)[1])
 
     def table_display(self):
         self.tableWidget.setRowCount(0)
