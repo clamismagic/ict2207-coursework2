@@ -71,10 +71,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listWidget.itemClicked.connect(self.compare_file)
         self.buildsignButton.clicked.connect(self.recompile_and_sign)
 
-        # testing list
-        # self.listWidget.addItem("aaaaaaa")
-        # self.listWidget.addItem("bbbbbbb")
-
         self.compareTableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.compareTableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         self.compareTableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
@@ -115,32 +111,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # print(key_path[0])
         self.keystorePathEdit.setText(key_path[0])
 
-    def obfuscate(self):
-        # self.tableWidget.insertRow(row_position)
-        # self.tableWidget.setItem(row_position, 0, QTableWidgetItem("category"))
-        # self.tableWidget.setItem(row_position, 1, QTableWidgetItem("original"))
-        # self.tableWidget.setItem(row_position, 2, QTableWidgetItem("obfuscated"))
-        
+    def obfuscate(self):        
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
                 disassemble_time = time.process_time()
                 obfuscate_time = time.process_time()
                 time.sleep(2)
 
-                # get apk hash
-                before_hash = hashlib.sha256()
+                # Get APK Hash
+                before_hash_md5 = hashlib.md5()
                 with open(self.apkpathEdit.text(),"rb") as f:
                     for byte_block in iter(lambda: f.read(4096), b""):
-                        before_hash.update(byte_block)
+                        before_hash_md5.update(byte_block)
+
+                before_hash_sha1 = hashlib.sha1()
+                with open(self.apkpathEdit.text(),"rb") as f:
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        before_hash_sha1.update(byte_block)
+
+                before_hash_sha256 = hashlib.sha256()
+                with open(self.apkpathEdit.text(),"rb") as f:
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        before_hash_sha256.update(byte_block)
                 
                 # App Comparison Table
                 self.compareTableWidget.insertRow(0)
-                self.compareTableWidget.setItem(0, 0, QTableWidgetItem("SHA256"))
-                self.compareTableWidget.setItem(0, 1, QTableWidgetItem(before_hash.hexdigest()))
+                self.compareTableWidget.setItem(0, 0, QTableWidgetItem("MD5"))
+                self.compareTableWidget.setItem(0, 1, QTableWidgetItem(before_hash_md5.hexdigest()))
 
                 self.compareTableWidget.insertRow(1)
-                self.compareTableWidget.setItem(1, 0, QTableWidgetItem("File Size"))
-                self.compareTableWidget.setItem(1, 1, QTableWidgetItem(str(round(os.path.getsize(self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
+                self.compareTableWidget.setItem(1, 0, QTableWidgetItem("SHA1"))
+                self.compareTableWidget.setItem(1, 1, QTableWidgetItem(before_hash_sha1.hexdigest()))
+
+                self.compareTableWidget.insertRow(2)
+                self.compareTableWidget.setItem(2, 0, QTableWidgetItem("SHA256"))
+                self.compareTableWidget.setItem(2, 1, QTableWidgetItem(before_hash_sha256.hexdigest()))
+
+                self.compareTableWidget.insertRow(3)
+                self.compareTableWidget.setItem(3, 0, QTableWidgetItem("File Size"))
+                self.compareTableWidget.setItem(3, 1, QTableWidgetItem(str(round(os.path.getsize(self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
 
                 # Runtime Table
                 self.runtimeTableWidget.insertRow(0)
@@ -165,7 +174,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.thread.start()
 
                 self.progress_window()
-                # self.listWidget.itemClicked.connect(self.table_display)
 
             except Exception as e:
                 print("Error: {0}".format(e))
@@ -205,38 +213,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.message_box.setText(popup_message)
         self.message_box.exec_()
 
-    def table_display(self):
+    '''def table_display(self):
         self.compareTableWidget.setRowCount(0)
         self.compareTableWidget.insertRow(self.compareTableWidget.rowCount())
         self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 0,
                                  QTableWidgetItem(self.listWidget.currentItem().text()))
         self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
         self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
+    '''
 
     def compare_file(self):
         self.compare_box = QMessageBox()
-        # self.compare_box_layout = QHBoxLayout()
-        # self.before_text = QPlainTextEdit()
-        # self.after_text = QPlainTextEdit()
-
-        # self.before_text.appendPlainText("aaa")
-        # self.after_text.appendPlainText("bbb")
+        self.compare_box.setLayout(QHBoxLayout())
         
         self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
         filelist = self.o.get_smali_files()
         print(filelist[0])
         r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
         newlist = list(filter(r.match, filelist))
-        print(r)
-        print(newlist)
-        # self.compare_box.setLayout(self.compare_box_layout)
         with open(filelist[self.listWidget.currentRow()], 'r') as file:
             text = file.read().replace('\n', '')
-        self.compare_box.setText(text)
+        # self.compare_box.setText(text)
         self.compare_box.setWindowTitle(self.listWidget.currentItem().text())
-        # self.compare_box_layout.addWidget(self.before_text)
-        # self.compare_box_layout.addWidget(self.after_text)
+
+        self.addCompareWidget()
         self.compare_box.exec_()
+
+    def addCompareWidget(self):
+        self.l = QHBoxLayout()
+        self.before_text = QPlainTextEdit()
+        self.after_text = QPlainTextEdit()
+
+        self.before_text.appendPlainText("aaa")
+        self.after_text.appendPlainText("bbb")
+
+        self.l.addWidget(self.before_text)
+        self.l.addWidget(self.after_text)
+        
+        self.compare_box.setLayout(self.l)
 
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\

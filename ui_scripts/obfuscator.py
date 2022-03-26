@@ -113,7 +113,9 @@ class Ui_MainWindow(object):
         self.runtimeTableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem4)
         self.runtimeTableWidget.setObjectName(u"runtimeTableWidget")
         self.runtimeTableWidget.horizontalHeader().setVisible(True)
+        self.runtimeTableWidget.horizontalHeader().setCascadingSectionResizes(True)
         self.runtimeTableWidget.horizontalHeader().setStretchLastSection(True)
+        self.runtimeTableWidget.verticalHeader().setVisible(False)
 
         self.gridLayout.addWidget(self.runtimeTableWidget, 3, 1, 1, 1)
 
