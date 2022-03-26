@@ -41,6 +41,9 @@ class Worker(QObject):
 
     finished = pyqtSignal()
     decompiled = pyqtSignal()
+    disassemble_time_taken = pyqtSignal(float)
+    obfuscate_time_taken = pyqtSignal(float)
+    recompile_time_taken = pyqtSignal(float)
     progress = pyqtSignal(int)
     recompiled = pyqtSignal(bool)
 
@@ -48,13 +51,17 @@ class Worker(QObject):
         global mutex
 
         # decompile apk into smali
+        start_disassembly = time.time()
         self.controller.disassemble_apk()
+        self.disassemble_time_taken.emit(time.time() - start_disassembly)
         self.decompiled.emit()
 
         # allow main thread to read files
         mutex.acquire()
+        print("OBFUSCATING FILES")
 
         # obfuscate smali files
+        start_obfuscation = time.time()
         counter = 0
         self.controller.obfuscate_manifest()
         self.add_to_list(self.controller.manifest_file)
@@ -66,11 +73,14 @@ class Worker(QObject):
             self.progress.emit(counter)
             self.add_to_list(smali_file)
 
+        self.obfuscate_time_taken.emit(time.time() - start_obfuscation)
         self.finished.emit()
         mutex.release()
 
     def run_recompile(self):
+        recompile_start_time = time.time()
         self.recompiled.emit(self.controller.recompile_and_sign_apk())
+        self.recompile_time_taken.emit(time.time() - recompile_start_time)
         self.finished.emit()
 
     def add_to_list(self, smali_file: str):
@@ -117,12 +127,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress_window_canvas: Union[QMessageBox, None] = None
         self.progress_bar_window: Union[QMessageBox, None] = None
         self.all_done_canvas: Union[QMessageBox, None] = None
+        self.disassemble_time_taken: float = 0
+        self.obfuscate_time_taken: float = 0
 
         self.compare_box: Union[QMessageBox, None] = None
 
         self.recompile_thread: QThread = QThread()
         self.recompile_worker_thread: Union[Worker, None] = None
         self.recompiled: bool = False
+        self.recompile_time_taken: float = 0
         self.recompile_loading_window: Union[QMessageBox, None] = None
 
     def apk_browse(self):
@@ -135,7 +148,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # print(key_path[0])
         self.keystorePathEdit.setText(key_path[0])
 
-    def obfuscate(self):        
+    def obfuscate(self):
+        global mutex
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
                 disassemble_time = time.process_time()
@@ -181,11 +195,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Runtime Table
                 self.runtimeTableWidget.insertRow(0)
                 self.runtimeTableWidget.setItem(0, 0, QTableWidgetItem("Disassembly Time"))
-                self.runtimeTableWidget.setItem(0, 1, QTableWidgetItem(str(time.process_time() - disassemble_time)))
 
                 self.runtimeTableWidget.insertRow(1)
                 self.runtimeTableWidget.setItem(1, 0, QTableWidgetItem("Obfuscation Time"))
-                self.runtimeTableWidget.setItem(1, 1, QTableWidgetItem(str(time.process_time() - obfuscate_time)))
+
+                self.runtimeTableWidget.insertRow(2)
+                self.runtimeTableWidget.setItem(2, 0, QTableWidgetItem("Recompile Time"))
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
@@ -193,7 +208,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.worker_thread.moveToThread(self.thread)
                 self.thread.started.connect(self.worker_thread.run)
+                mutex.acquire()
                 self.worker_thread.decompiled.connect(self.get_original_files)
+                self.worker_thread.disassemble_time_taken.connect(self.get_disassemble_time_taken)
+                self.worker_thread.obfuscate_time_taken.connect(self.get_obfuscate_time_taken)
                 self.worker_thread.finished.connect(self.thread.quit)
                 self.worker_thread.finished.connect(self.all_done_window)
                 self.worker_thread.finished.connect(self.worker_thread.deleteLater)
@@ -211,14 +229,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.popup("Error", "Incorrect File Provided!")
 
     def get_original_files(self):
-        global mutex
-        mutex.acquire()
+        print("PRINTING ORIGINAL FILES")
         with open(self.o.manifest_file, 'r') as file:
             self.original_smali.append(file.read())
         for smali_file in self.o.smali_files:
             with open(smali_file, 'r') as file:
                 self.original_smali.append(file.read())
         mutex.release()
+
+    def get_disassemble_time_taken(self, time_taken: float):
+        self.disassemble_time_taken = time_taken
+
+    def get_obfuscate_time_taken(self, time_taken: float):
+        self.obfuscate_time_taken = time_taken
 
     def progress_window(self):
         self.progress_window_canvas = QMessageBox()
@@ -239,6 +262,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.all_done_canvas.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         self.all_done_canvas.setStandardButtons(QMessageBox.Ok)
         self.all_done_canvas.exec_()
+        self.runtimeTableWidget.setItem(0, 1, QTableWidgetItem(f"{str(self.disassemble_time_taken)} seconds"))
+        self.runtimeTableWidget.setItem(1, 1, QTableWidgetItem(f"{str(self.obfuscate_time_taken)} seconds"))
 
         # grab contents of obfuscated files
         with open(self.o.manifest_file, 'r') as file:
@@ -278,6 +303,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.recompile_worker_thread.moveToThread(self.recompile_thread)
                 self.recompile_thread.started.connect(self.recompile_worker_thread.run_recompile)
                 self.recompile_worker_thread.recompiled.connect(self.toggle_recompiled)
+                self.recompile_worker_thread.recompile_time_taken.connect(self.get_recompile_time_taken)
                 self.recompile_worker_thread.finished.connect(self.recompile_thread.quit)
                 self.recompile_worker_thread.finished.connect(self.recompile_done_window)
                 self.recompile_thread.start()
@@ -296,6 +322,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.popup("Error", "Incorrect Keystore/Password Provided!")
+
+    def get_recompile_time_taken(self, time_taken: float):
+        self.recompile_time_taken = time_taken
 
     def toggle_recompiled(self, recompile_status: bool):
         self.recompiled = recompile_status
@@ -336,6 +365,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                             QTableWidgetItem(
                                                 str(round(os.path.getsize(
                                                     self.o.output_apk_path) / (1024 * 1024), 3)) + " MB"))
+            self.runtimeTableWidget.setItem(2, 1, QTableWidgetItem(f"{str(self.recompile_time_taken)} seconds"))
             os.startfile(os.path.dirname(self.o.output_apk_path))
         else:
             build_sign_message_box.setWindowTitle("Build & Sign Failed!")
