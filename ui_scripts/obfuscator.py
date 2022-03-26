@@ -64,37 +64,37 @@ class Ui_MainWindow(object):
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.comparetableWidget = QTableWidget(self.centralwidget)
-        if (self.comparetableWidget.columnCount() < 3):
-            self.comparetableWidget.setColumnCount(3)
+        self.compareTableWidget = QTableWidget(self.centralwidget)
+        if (self.compareTableWidget.columnCount() < 3):
+            self.compareTableWidget.setColumnCount(3)
         font = QFont()
         font.setBold(True)
         font.setWeight(75)
         __qtablewidgetitem = QTableWidgetItem()
         __qtablewidgetitem.setFont(font);
-        self.comparetableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.compareTableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
         __qtablewidgetitem1.setFont(font);
-        self.comparetableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.compareTableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
         __qtablewidgetitem2.setFont(font);
-        self.comparetableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        self.comparetableWidget.setObjectName(u"comparetableWidget")
+        self.compareTableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.compareTableWidget.setObjectName(u"compareTableWidget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy1.setHorizontalStretch(5)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.comparetableWidget.sizePolicy().hasHeightForWidth())
-        self.comparetableWidget.setSizePolicy(sizePolicy1)
-        self.comparetableWidget.setRowCount(0)
-        self.comparetableWidget.setColumnCount(3)
-        self.comparetableWidget.horizontalHeader().setVisible(True)
-        self.comparetableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.comparetableWidget.horizontalHeader().setDefaultSectionSize(100)
-        self.comparetableWidget.horizontalHeader().setStretchLastSection(True)
-        self.comparetableWidget.verticalHeader().setVisible(False)
-        self.comparetableWidget.verticalHeader().setCascadingSectionResizes(False)
+        sizePolicy1.setHeightForWidth(self.compareTableWidget.sizePolicy().hasHeightForWidth())
+        self.compareTableWidget.setSizePolicy(sizePolicy1)
+        self.compareTableWidget.setRowCount(0)
+        self.compareTableWidget.setColumnCount(3)
+        self.compareTableWidget.horizontalHeader().setVisible(True)
+        self.compareTableWidget.horizontalHeader().setCascadingSectionResizes(True)
+        self.compareTableWidget.horizontalHeader().setDefaultSectionSize(100)
+        self.compareTableWidget.horizontalHeader().setStretchLastSection(True)
+        self.compareTableWidget.verticalHeader().setVisible(False)
+        self.compareTableWidget.verticalHeader().setCascadingSectionResizes(False)
 
-        self.gridLayout.addWidget(self.comparetableWidget, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.compareTableWidget, 1, 1, 1, 1)
 
         self.comparisonmetricsLabel = QLabel(self.centralwidget)
         self.comparisonmetricsLabel.setObjectName(u"comparisonmetricsLabel")
@@ -103,8 +103,17 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.comparisonmetricsLabel, 0, 1, 1, 1)
 
         self.runtimeTableWidget = QTableWidget(self.centralwidget)
+        if (self.runtimeTableWidget.columnCount() < 2):
+            self.runtimeTableWidget.setColumnCount(2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        __qtablewidgetitem3.setFont(font);
+        self.runtimeTableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        __qtablewidgetitem4.setFont(font);
+        self.runtimeTableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem4)
         self.runtimeTableWidget.setObjectName(u"runtimeTableWidget")
         self.runtimeTableWidget.horizontalHeader().setVisible(True)
+        self.runtimeTableWidget.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout.addWidget(self.runtimeTableWidget, 3, 1, 1, 1)
 
@@ -227,13 +236,17 @@ class Ui_MainWindow(object):
         self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
         self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
-        ___qtablewidgetitem = self.comparetableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.compareTableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Category", None));
-        ___qtablewidgetitem1 = self.comparetableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.compareTableWidget.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Original", None));
-        ___qtablewidgetitem2 = self.comparetableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2 = self.compareTableWidget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Obfuscated", None));
         self.comparisonmetricsLabel.setText(QCoreApplication.translate("MainWindow", u"Comparison Metrics", None))
+        ___qtablewidgetitem3 = self.runtimeTableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Category", None));
+        ___qtablewidgetitem4 = self.runtimeTableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.changedfilesLabel.setText(QCoreApplication.translate("MainWindow", u"List of Changed Files", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"App Runtime Metrics", None))
         self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))

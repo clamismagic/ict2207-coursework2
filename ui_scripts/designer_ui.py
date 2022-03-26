@@ -75,12 +75,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.listWidget.addItem("aaaaaaa")
         # self.listWidget.addItem("bbbbbbb")
 
-        self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.compareTableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.compareTableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.compareTableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         
-        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.compareTableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # self.compareTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+
+        self.runtimeTableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.runtimeTableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        
+        self.runtimeTableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # self.runtimeTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+
         self.message_box: Union[QThread, None] = None
 
         self.thread: QThread = QThread()
@@ -109,8 +116,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.keystorePathEdit.setText(key_path[0])
 
     def obfuscate(self):
-        row_position = self.tableWidget.rowCount()
-
         # self.tableWidget.insertRow(row_position)
         # self.tableWidget.setItem(row_position, 0, QTableWidgetItem("category"))
         # self.tableWidget.setItem(row_position, 1, QTableWidgetItem("original"))
@@ -118,15 +123,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
             try:
+                disassemble_time = time.process_time()
+                obfuscate_time = time.process_time()
+                time.sleep(2)
+
                 # get apk hash
                 before_hash = hashlib.sha256()
                 with open(self.apkpathEdit.text(),"rb") as f:
                     for byte_block in iter(lambda: f.read(4096), b""):
                         before_hash.update(byte_block)
                 
-                self.tableWidget.insertRow(row_position)
-                self.tableWidget.setItem(row_position, 0, QTableWidgetItem("SHA256"))
-                self.tableWidget.setItem(row_position, 1, QTableWidgetItem(before_hash.hexdigest()))
+                # App Comparison Table
+                self.compareTableWidget.insertRow(0)
+                self.compareTableWidget.setItem(0, 0, QTableWidgetItem("SHA256"))
+                self.compareTableWidget.setItem(0, 1, QTableWidgetItem(before_hash.hexdigest()))
+
+                self.compareTableWidget.insertRow(1)
+                self.compareTableWidget.setItem(1, 0, QTableWidgetItem("File Size"))
+                self.compareTableWidget.setItem(1, 1, QTableWidgetItem(str(round(os.path.getsize(self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
+
+                # Runtime Table
+                self.runtimeTableWidget.insertRow(0)
+                self.runtimeTableWidget.setItem(0, 0, QTableWidgetItem("Disassembly Time"))
+                self.runtimeTableWidget.setItem(0, 1, QTableWidgetItem(str(time.process_time() - disassemble_time)))
+
+                self.runtimeTableWidget.insertRow(1)
+                self.runtimeTableWidget.setItem(1, 0, QTableWidgetItem("Obfuscation Time"))
+                self.runtimeTableWidget.setItem(1, 1, QTableWidgetItem(str(time.process_time() - obfuscate_time)))
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
@@ -183,12 +206,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.message_box.exec_()
 
     def table_display(self):
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.insertRow(self.tableWidget.rowCount())
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 0,
+        self.compareTableWidget.setRowCount(0)
+        self.compareTableWidget.insertRow(self.compareTableWidget.rowCount())
+        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 0,
                                  QTableWidgetItem(self.listWidget.currentItem().text()))
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
-        self.tableWidget.setItem(self.tableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
+        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
+        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
 
     def compare_file(self):
         self.compare_box = QMessageBox()

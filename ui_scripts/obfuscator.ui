@@ -72,7 +72,7 @@
     <item>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="1">
-       <widget class="QTableWidget" name="comparetableWidget">
+       <widget class="QTableWidget" name="compareTableWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>5</horstretch>
@@ -156,6 +156,31 @@
         <attribute name="horizontalHeaderVisible">
          <bool>true</bool>
         </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Category</string>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Value</string>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
        </widget>
       </item>
       <item row="1" column="0" rowspan="3">
