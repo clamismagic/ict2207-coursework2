@@ -323,6 +323,7 @@ def main():
 
     # Create a Qt widget, which will be our window.
     window = MainWindow()
+    window.setWindowTitle("The Best Smali Obfuscator")
     window.show()  # IMPORTANT!!!!! Windows are hidden by default.
 
     # Start the event loop.
