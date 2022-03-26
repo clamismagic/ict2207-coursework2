@@ -68,6 +68,13 @@ class Controller:
         # end of constructor
         return
 
+    def get_smali_files(self) -> List[str]:
+        return self.smali_files
+
+    # Get manifest_file
+    def get_android_manifest(self):
+        return self.manifest_file
+
     def disassemble_apk(self):
         # The input apk will be decoded with apktool
         apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
@@ -217,3 +224,4 @@ class Controller:
         except Exception as e:
             print("Error during apk compilation: {0}".format(e))
             return False
+
