@@ -160,6 +160,7 @@ class Ui_MainWindow(object):
 
         self.keystorePathEdit = QLineEdit(self.centralwidget)
         self.keystorePathEdit.setObjectName(u"keystorePathEdit")
+        self.keystorePathEdit.setReadOnly(True)
 
         self.buildGLayout.addWidget(self.keystorePathEdit, 0, 1, 1, 1)
 
@@ -233,7 +234,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"The Best Smali Obfuscator", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
