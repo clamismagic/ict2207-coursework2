@@ -230,7 +230,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
         newlist = list(filter(r.match, filelist))
         with open(filelist[self.listWidget.currentRow()], 'r') as file:
-            after_text = file.read().replace('\n', '')
+            after_text = file.read()#.replace('\n', '')
         
         before_text = "test"
 
@@ -295,6 +295,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             build_sign_message_box.setWindowTitle("Build & Sign Success!")
             build_sign_message_box.setText(f"Successfully built and signed the obfuscated project files!\n"
                                            f"APK is located at {self.o.output_apk_path}")
+            
+            # Get APK Hash
+            after_hash_md5 = hashlib.md5()
+            with open(self.o.output_apk_path,"rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    after_hash_md5.update(byte_block)
+
+            after_hash_sha1 = hashlib.sha1()
+            with open(self.o.output_apk_path,"rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    after_hash_sha1.update(byte_block)
+
+            after_hash_sha256 = hashlib.sha256()
+            with open(self.o.output_apk_path,"rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    after_hash_sha256.update(byte_block)
+            
+            # App Comparison Table
+            self.compareTableWidget.setItem(0, 2, QTableWidgetItem(after_hash_md5.hexdigest()))
+            self.compareTableWidget.setItem(1, 2, QTableWidgetItem(after_hash_sha1.hexdigest()))
+            self.compareTableWidget.setItem(2, 2, QTableWidgetItem(after_hash_sha256.hexdigest()))
+            self.compareTableWidget.setItem(3, 2, QTableWidgetItem(str(round(os.path.getsize(self.o.output_apk_path) / (1024 * 1024), 3)) + " MB"))
+                    
+            os.startfile(self.o.output_apk_path)
         else:
             build_sign_message_box.setWindowTitle("Build & Sign Failed!")
             build_sign_message_box.setText("Unable to build and sign the obfuscated project files. "
