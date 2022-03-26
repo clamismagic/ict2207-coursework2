@@ -62,6 +62,9 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.popoutOkButton, 2, 0, 1, 2)
 
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusBar = QStatusBar(MainWindow)
+        self.statusBar.setObjectName(u"statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
 
