@@ -52,7 +52,6 @@ class Worker(QObject):
             self.controller.obfuscate_smali(smali_file)
             counter += 1
             self.progress.emit(counter)
-            print(f"counter: {counter}")
             self.add_to_list(smali_file)
 
         self.finished.emit()
@@ -136,14 +135,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.worker_thread.moveToThread(self.thread)
                 self.thread.started.connect(self.worker_thread.run)
                 self.worker_thread.finished.connect(self.thread.quit)
+                self.worker_thread.finished.connect(self.all_done_window)
                 self.worker_thread.finished.connect(self.worker_thread.deleteLater)
                 self.thread.finished.connect(self.thread.deleteLater)
                 self.worker_thread.progress.connect(self.increase_loading_bar)
                 self.thread.start()
 
                 self.progress_window()
-                # self.worker_thread.finished.connect(self.progress_window_canvas.accept())
-                # self.worker_thread.finished.connect(self.all_done_window())
                 # self.listWidget.itemClicked.connect(self.table_display)
 
             except Exception as e:
@@ -159,10 +157,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress_window_canvas.setText("Number of files disassembled & obfuscated: 0")
         self.progress_window_canvas.setWindowTitle("Loading")
         self.progress_window_canvas.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        self.progress_window_canvas.setStandardButtons(QMessageBox.Ok)
+        self.progress_window_canvas.setStandardButtons(QMessageBox.NoButton)
         self.progress_window_canvas.exec_()
 
     def all_done_window(self):
+        self.progress_window_canvas.accept()
         self.all_done_canvas = QMessageBox()
         self.all_done_canvas.setStyleSheet(qdarkstyle.load_stylesheet())
         self.all_done_canvas.setText(f"Disassembly and Obfuscation complete!\n"
