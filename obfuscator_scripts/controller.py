@@ -180,7 +180,7 @@ class Controller:
         # call to obfuscate Android Manifest based on user selection
         self.obfuscator.rand_manifest(self.manifest_file)
 
-    def recompile_and_sign_apk(self):
+    def recompile_and_sign_apk(self) -> bool:
         apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
         apksigner_path = os.path.join(self.project_root, "tools", "apksigner.bat")
         cmd_recompile = "java -jar \"{0}\" b --force-all \"{1}\" -o \"{2}\"".format(apktools_path,
@@ -220,7 +220,8 @@ class Controller:
             print('Running apksigner command "{0}"'.format(cmd_sign))
             subprocess.check_output(cmd_sign, stderr=subprocess.STDOUT).strip()
             print("Successfully recompiled and signed APK")
+            return True
         except Exception as e:
             print("Error during apk compilation: {0}".format(e))
-            raise
+            return False
 

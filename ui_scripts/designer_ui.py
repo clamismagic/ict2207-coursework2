@@ -31,13 +31,14 @@ def exit_program():
 
 
 class Worker(QObject):
-    def __init__(self, controller: controller.Controller, list_widget: QListWidget):
+    def __init__(self, controller: controller.Controller, list_widget: QListWidget = None):
         super().__init__()
         self.controller: controller.Controller = controller
         self.list_widget: QListWidget = list_widget
 
     finished = pyqtSignal()
     progress = pyqtSignal(int)
+    recompiled = pyqtSignal(bool)
 
     def run(self):
         # decompile apk into smali
@@ -54,6 +55,10 @@ class Worker(QObject):
             self.progress.emit(counter)
             self.add_to_list(smali_file)
 
+        self.finished.emit()
+
+    def run_recompile(self):
+        self.recompiled.emit(self.controller.recompile_and_sign_apk())
         self.finished.emit()
 
     def add_to_list(self, smali_file: str):
@@ -100,6 +105,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.all_done_canvas: Union[QMessageBox, None] = None
 
         self.compare_box: Union[QMessageBox, None] = None
+
+        self.recompile_thread: QThread = QThread()
+        self.recompile_worker_thread: Union[Worker, None] = None
+        self.recompiled: bool = False
+        self.recompile_loading_window: Union[QMessageBox, None] = None
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -255,20 +265,54 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\
                 and self.keystorePathEdit.text() != '':
-            #    and self.aliaspassEdit.text() != ''\
-            #    and self.keyaliasEdit.text() != '':
             try:
                 self.o.keystore_file = self.keystorePathEdit.text()
                 self.o.keystore_passwd = self.keystorePassEdit.text()
                 self.o.key_alias = self.keyaliasEdit.text()
                 self.o.key_passwd = self.aliaspassEdit.text()
-                self.o.recompile_and_sign_apk()
+
+                self.recompile_worker_thread = Worker(self.o)
+                self.recompile_worker_thread.moveToThread(self.recompile_thread)
+                self.recompile_thread.started.connect(self.recompile_worker_thread.run_recompile)
+                self.recompile_worker_thread.recompiled.connect(self.toggle_recompiled)
+                self.recompile_worker_thread.finished.connect(self.recompile_thread.quit)
+                self.recompile_worker_thread.finished.connect(self.recompile_done_window)
+                self.recompile_thread.start()
+
+                self.recompile_loading_window = QMessageBox()
+                self.recompile_loading_window.setStyleSheet(qdarkstyle.load_stylesheet())
+                self.recompile_loading_window.setStandardButtons(QMessageBox.NoButton)
+                self.progress_window_canvas.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+                self.recompile_loading_window.setWindowTitle("Loading")
+                self.recompile_loading_window.setText("Build & Sign project files in progress...")
+                self.recompile_loading_window.exec_()
+
             except Exception as e:
                 print("Error: {0}".format(e))
                 raise
 
         else:
             self.popup("Error", "Incorrect Keystore/Password Provided!")
+
+    def toggle_recompiled(self, recompile_status: bool):
+        self.recompiled = recompile_status
+
+    def recompile_done_window(self):
+        self.recompile_loading_window.accept()
+        build_sign_message_box = QMessageBox()
+        build_sign_message_box.setStyleSheet(qdarkstyle.load_stylesheet())
+        build_sign_message_box.setStandardButtons(QMessageBox.Ok)
+
+        if self.recompiled:
+            build_sign_message_box.setWindowTitle("Build & Sign Success!")
+            build_sign_message_box.setText(f"Successfully built and signed the obfuscated project files!\n"
+                                           f"APK is located at {self.o.output_apk_path}")
+        else:
+            build_sign_message_box.setWindowTitle("Build & Sign Failed!")
+            build_sign_message_box.setText("Unable to build and sign the obfuscated project files. "
+                                           "Please double check your keystore inputs and try again.")
+
+        build_sign_message_box.exec_()
 
 
 def main():
