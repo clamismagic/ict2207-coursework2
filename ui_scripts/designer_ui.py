@@ -233,6 +233,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     '''
 
     def compare_file(self):
+        self.compare_box = listPopUp("aaaa", "bbbb")
+        self.compare_box.show()
+
+        '''
         self.compare_box = QMessageBox()
         self.compare_box.setLayout(QHBoxLayout())
         
@@ -248,6 +252,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.addCompareWidget()
         self.compare_box.exec_()
+        '''
 
     def addCompareWidget(self):
         self.l = QHBoxLayout()
@@ -314,6 +319,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         build_sign_message_box.exec_()
 
+class listPopUp(QMainWindow):
+    def __init__(self, before_text: str, after_text: str):
+        super().__init__()
+        self.before_text: str = before_text
+        self.after_text: str = after_text
+        self.setStyleSheet(qdarkstyle.load_stylesheet())
+
+        self.setObjectName("Dialog")
+        self.resize(400, 211)
+        self.popupWindow = QLabel(self)
+
+        self.compare_layout = QHBoxLayout()
+        self.beforeTextEdit = QTextEdit()
+        self.afterTextEdit = QTextEdit()
+        self.closeButton = QPushButton()
+        self.closeButton.setObjectName("closeButton")
+
+        self.beforeTextEdit.setText(self.before_text)
+        self.afterTextEdit.setText(self.after_text)
+
+        self.popupWindow.setGeometry(QRect(20, 70, 360, 71))
+        self.popupWindow.setObjectName("popupWindow")
+        self.popupWindow.setLayout(self.compare_layout)
+
+        self.closeButton.clicked.connect(self.closeWindow)
+
+    def closeWindow(self):
+        self.close()
 
 def main():
     # You need one (and only one) QApplication instance per application.
