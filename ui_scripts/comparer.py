@@ -43,13 +43,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.beforeEdit = QTextEdit(self.centralwidget)
         self.beforeEdit.setObjectName(u"beforeEdit")
+        self.beforeEdit.setReadOnly(True)
 
         self.horizontalLayout.addWidget(self.beforeEdit)
 
-        self.afterMiddle = QTextEdit(self.centralwidget)
-        self.afterMiddle.setObjectName(u"afterMiddle")
+        self.afterEdit = QTextEdit(self.centralwidget)
+        self.afterEdit.setObjectName(u"afterEdit")
+        self.afterEdit.setReadOnly(True)
 
-        self.horizontalLayout.addWidget(self.afterMiddle)
+        self.horizontalLayout.addWidget(self.afterEdit)
 
 
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 2)

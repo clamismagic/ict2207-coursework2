@@ -224,17 +224,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.message_box.setText(popup_message)
         self.message_box.exec_()
 
-    '''def table_display(self):
-        self.compareTableWidget.setRowCount(0)
-        self.compareTableWidget.insertRow(self.compareTableWidget.rowCount())
-        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 0,
-                                 QTableWidgetItem(self.listWidget.currentItem().text()))
-        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 1, QTableWidgetItem('before'))
-        self.compareTableWidget.setItem(self.compareTableWidget.rowCount()-1, 2, QTableWidgetItem('after'))
-    '''
-
     def compare_file(self):
-        self.compare_box = listPopUp("aaaa", "bbbb")
+        filelist = self.o.smali_files
+        print(filelist[0])
+        r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
+        newlist = list(filter(r.match, filelist))
+        with open(filelist[self.listWidget.currentRow()], 'r') as file:
+            after_text = file.read().replace('\n', '')
+        
+        before_text = "test"
+
+        self.compare_box = listPopUp(before_text, after_text)
         self.compare_box.show()
 
         '''
@@ -242,31 +242,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.compare_box.setLayout(QHBoxLayout())
         
         self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
-        filelist = self.o.smali_files
-        print(filelist[0])
-        r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
-        newlist = list(filter(r.match, filelist))
-        with open(filelist[self.listWidget.currentRow()], 'r') as file:
-            text = file.read().replace('\n', '')
+        
         # self.compare_box.setText(text)
         self.compare_box.setWindowTitle(self.listWidget.currentItem().text())
 
         self.addCompareWidget()
         self.compare_box.exec_()
         '''
-
-    def addCompareWidget(self):
-        self.l = QHBoxLayout()
-        self.before_text = QPlainTextEdit()
-        self.after_text = QPlainTextEdit()
-
-        self.before_text.appendPlainText("aaa")
-        self.after_text.appendPlainText("bbb")
-
-        self.l.addWidget(self.before_text)
-        self.l.addWidget(self.after_text)
-        
-        self.compare_box.setLayout(self.l)
 
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\
@@ -321,11 +303,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         build_sign_message_box.exec_()
 
 class listPopUp(QMainWindow, popout):
-    def __init__(self, before_text: str, after_text: str, parent=MainWindow):
-        super().__init__(parent)
+    def __init__(self, before_text: str, after_text: str,):
+        super().__init__()
+        self.setupUi(self)
         self.before_text: str = before_text
         self.after_text: str = after_text
-
+        self.beforeEdit.setText(before_text)
+        self.afterEdit.setText(after_text)
+        
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
         self.popoutOkButton.clicked.connect(self.closeWindow)

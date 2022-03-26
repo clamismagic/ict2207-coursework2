@@ -50,10 +50,18 @@
     <item row="1" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QTextEdit" name="beforeEdit"/>
+       <widget class="QTextEdit" name="beforeEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QTextEdit" name="afterMiddle"/>
+       <widget class="QTextEdit" name="afterEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
