@@ -92,7 +92,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
 
+        self.files_obfuscated = 0
+        self.progress_window_canvas: Union[QMessageBox, None] = None
         self.progress_bar_window: Union[QMessageBox, None] = None
+        self.all_done_canvas: Union[QMessageBox, None] = None
+
+        self.compare_box: Union[QMessageBox, None] = None
 
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
@@ -117,13 +122,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # get apk hash
                 before_hash = hashlib.sha256()
                 with open(self.apkpathEdit.text(),"rb") as f:
-                    for byte_block in iter(lambda: f.read(4096),b""):
+                    for byte_block in iter(lambda: f.read(4096), b""):
                         before_hash.update(byte_block)
                 
                 self.tableWidget.insertRow(row_position)
                 self.tableWidget.setItem(row_position, 0, QTableWidgetItem("SHA256"))
                 self.tableWidget.setItem(row_position, 1, QTableWidgetItem(before_hash.hexdigest()))
-
 
                 print(magic.from_file(self.apkpathEdit.text()))
                 self.o = controller.Controller(self.apkpathEdit.text())
@@ -138,7 +142,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.thread.start()
 
                 self.progress_window()
-                
+                # self.worker_thread.finished.connect(self.progress_window_canvas.accept())
+                # self.worker_thread.finished.connect(self.all_done_window())
                 # self.listWidget.itemClicked.connect(self.table_display)
 
             except Exception as e:
@@ -149,17 +154,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.popup("Error", "Incorrect File Provided!")
 
     def progress_window(self):
-        self.progress_window = QMessageBox()
-        self.progress_window.setStyleSheet(qdarkstyle.load_stylesheet())
-        self.progress_window.setText("Number of files decompiled & obfuscated: 0")
-        self.progress_window.setWindowTitle("Loading")
-        self.progress_window.exec_()
+        self.progress_window_canvas = QMessageBox()
+        self.progress_window_canvas.setStyleSheet(qdarkstyle.load_stylesheet())
+        self.progress_window_canvas.setText("Number of files disassembled & obfuscated: 0")
+        self.progress_window_canvas.setWindowTitle("Loading")
+        self.progress_window_canvas.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.progress_window_canvas.setStandardButtons(QMessageBox.Ok)
+        self.progress_window_canvas.exec_()
+
+    def all_done_window(self):
+        self.all_done_canvas = QMessageBox()
+        self.all_done_canvas.setStyleSheet(qdarkstyle.load_stylesheet())
+        self.all_done_canvas.setText(f"Disassembly and Obfuscation complete!\n"
+                                     f"Total number of files decompiled & obfuscated: {self.files_obfuscated}")
+        self.all_done_canvas.setWindowTitle("Completed")
+        self.all_done_canvas.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self.all_done_canvas.setStandardButtons(QMessageBox.Ok)
+        self.all_done_canvas.exec_()
 
     def increase_loading_bar(self, inc: int):
-        self.progress_window.setText("Number of files decompiled & obfuscated: " + str(inc))
-        #return inc
-        print(inc)
-        #print(f"incrementing loading bar: {inc}")
+        self.progress_window_canvas.setText("Number of files decompiled & obfuscated: " + str(inc))
+        self.files_obfuscated = inc
 
     def popup(self, title, popup_message):
         self.message_box = QMessageBox()
@@ -178,26 +193,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def compare_file(self):
         self.compare_box = QMessageBox()
-        #self.compare_box_layout = QHBoxLayout()
-        #self.before_text = QPlainTextEdit()
-        #self.after_text = QPlainTextEdit()
+        # self.compare_box_layout = QHBoxLayout()
+        # self.before_text = QPlainTextEdit()
+        # self.after_text = QPlainTextEdit()
 
-        #self.before_text.appendPlainText("aaa")
-        #self.after_text.appendPlainText("bbb")
+        # self.before_text.appendPlainText("aaa")
+        # self.after_text.appendPlainText("bbb")
         
         self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
         filelist = self.o.get_smali_files()
-        r = re.compile("\\"+self.listWidget.currentItem().text())
+        print(filelist[0])
+        r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
         newlist = list(filter(r.match, filelist))
         print(r)
         print(newlist)
-        #self.compare_box.setLayout(self.compare_box_layout)
-        with open((os.path.dirname(self.o.working_dir_path) + "/" + self.listWidget.currentItem().text()), 'r') as file:
+        # self.compare_box.setLayout(self.compare_box_layout)
+        with open(filelist[self.listWidget.currentRow()], 'r') as file:
             text = file.read().replace('\n', '')
         self.compare_box.setText(text)
         self.compare_box.setWindowTitle(self.listWidget.currentItem().text())
-        #self.compare_box_layout.addWidget(self.before_text)
-        #self.compare_box_layout.addWidget(self.after_text)
+        # self.compare_box_layout.addWidget(self.before_text)
+        # self.compare_box_layout.addWidget(self.after_text)
         self.compare_box.exec_()
 
     def recompile_and_sign(self):

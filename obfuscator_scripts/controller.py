@@ -71,8 +71,8 @@ class Controller:
     def get_smali_files(self) -> List[str]:
         return self.smali_files
 
-    #Get manifrst_file
-    def get_Android_Manifest(self):
+    # Get manifest_file
+    def get_android_manifest(self):
         return self.manifest_file
 
     def disassemble_apk(self):
