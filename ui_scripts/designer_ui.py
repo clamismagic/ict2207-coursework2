@@ -237,7 +237,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.compare_box.setLayout(QHBoxLayout())
         
         self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
-        filelist = self.o.get_smali_files()
+        filelist = self.o.smali_files
         print(filelist[0])
         r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
         newlist = list(filter(r.match, filelist))
@@ -323,6 +323,7 @@ def main():
 
     # Create a Qt widget, which will be our window.
     window = MainWindow()
+    window.setWindowTitle("The Best Smali Obfuscator")
     window.show()  # IMPORTANT!!!!! Windows are hidden by default.
 
     # Start the event loop.
