@@ -71,48 +71,8 @@
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <widget class="QListWidget" name="listWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QListWidget::item { border-bottom: 1px solid gray; opacity: 0.5; padding-top: 5px; padding-bottom: 5px; }</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="comparisonmetricsLabel">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Comparison Metrics</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="changedfilesLabel">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>List of Changed Files</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
-       <widget class="QTableWidget" name="tableWidget">
+       <widget class="QTableWidget" name="comparetableWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>5</horstretch>
@@ -176,6 +136,66 @@
           </font>
          </property>
         </column>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="comparisonmetricsLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Comparison Metrics</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QTableWidget" name="runtimeTableWidget">
+        <attribute name="horizontalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
+       </widget>
+      </item>
+      <item row="1" column="0" rowspan="3">
+       <widget class="QListWidget" name="listWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QListWidget::item { border-bottom: 1px solid gray; opacity: 0.5; padding-top: 5px; padding-bottom: 5px; }</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="changedfilesLabel">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>List of Changed Files</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>App Runtime Metrics</string>
+        </property>
        </widget>
       </item>
      </layout>

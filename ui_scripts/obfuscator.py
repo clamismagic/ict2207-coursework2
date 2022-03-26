@@ -64,25 +64,60 @@ class Ui_MainWindow(object):
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
-        self.listWidget = QListWidget(self.centralwidget)
-        self.listWidget.setObjectName(u"listWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy1.setHorizontalStretch(1)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.listWidget.sizePolicy().hasHeightForWidth())
-        self.listWidget.setSizePolicy(sizePolicy1)
-        self.listWidget.setStyleSheet(u"QListWidget::item { border-bottom: 1px solid gray; opacity: 0.5; padding-top: 5px; padding-bottom: 5px; }")
-
-        self.gridLayout.addWidget(self.listWidget, 1, 0, 1, 1)
-
-        self.comparisonmetricsLabel = QLabel(self.centralwidget)
-        self.comparisonmetricsLabel.setObjectName(u"comparisonmetricsLabel")
+        self.comparetableWidget = QTableWidget(self.centralwidget)
+        if (self.comparetableWidget.columnCount() < 3):
+            self.comparetableWidget.setColumnCount(3)
         font = QFont()
         font.setBold(True)
         font.setWeight(75)
+        __qtablewidgetitem = QTableWidgetItem()
+        __qtablewidgetitem.setFont(font);
+        self.comparetableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setFont(font);
+        self.comparetableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        __qtablewidgetitem2.setFont(font);
+        self.comparetableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.comparetableWidget.setObjectName(u"comparetableWidget")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(5)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.comparetableWidget.sizePolicy().hasHeightForWidth())
+        self.comparetableWidget.setSizePolicy(sizePolicy1)
+        self.comparetableWidget.setRowCount(0)
+        self.comparetableWidget.setColumnCount(3)
+        self.comparetableWidget.horizontalHeader().setVisible(True)
+        self.comparetableWidget.horizontalHeader().setCascadingSectionResizes(True)
+        self.comparetableWidget.horizontalHeader().setDefaultSectionSize(100)
+        self.comparetableWidget.horizontalHeader().setStretchLastSection(True)
+        self.comparetableWidget.verticalHeader().setVisible(False)
+        self.comparetableWidget.verticalHeader().setCascadingSectionResizes(False)
+
+        self.gridLayout.addWidget(self.comparetableWidget, 1, 1, 1, 1)
+
+        self.comparisonmetricsLabel = QLabel(self.centralwidget)
+        self.comparisonmetricsLabel.setObjectName(u"comparisonmetricsLabel")
         self.comparisonmetricsLabel.setFont(font)
 
         self.gridLayout.addWidget(self.comparisonmetricsLabel, 0, 1, 1, 1)
+
+        self.runtimeTableWidget = QTableWidget(self.centralwidget)
+        self.runtimeTableWidget.setObjectName(u"runtimeTableWidget")
+        self.runtimeTableWidget.horizontalHeader().setVisible(True)
+
+        self.gridLayout.addWidget(self.runtimeTableWidget, 3, 1, 1, 1)
+
+        self.listWidget = QListWidget(self.centralwidget)
+        self.listWidget.setObjectName(u"listWidget")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(1)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.listWidget.sizePolicy().hasHeightForWidth())
+        self.listWidget.setSizePolicy(sizePolicy2)
+        self.listWidget.setStyleSheet(u"QListWidget::item { border-bottom: 1px solid gray; opacity: 0.5; padding-top: 5px; padding-bottom: 5px; }")
+
+        self.gridLayout.addWidget(self.listWidget, 1, 0, 3, 1)
 
         self.changedfilesLabel = QLabel(self.centralwidget)
         self.changedfilesLabel.setObjectName(u"changedfilesLabel")
@@ -94,34 +129,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.changedfilesLabel, 0, 0, 1, 1)
 
-        self.tableWidget = QTableWidget(self.centralwidget)
-        if (self.tableWidget.columnCount() < 3):
-            self.tableWidget.setColumnCount(3)
-        __qtablewidgetitem = QTableWidgetItem()
-        __qtablewidgetitem.setFont(font);
-        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        __qtablewidgetitem1.setFont(font);
-        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        __qtablewidgetitem2.setFont(font);
-        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        self.tableWidget.setObjectName(u"tableWidget")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy2.setHorizontalStretch(5)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
-        self.tableWidget.setSizePolicy(sizePolicy2)
-        self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.horizontalHeader().setVisible(True)
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(100)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
+        self.label = QLabel(self.centralwidget)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font)
 
-        self.gridLayout.addWidget(self.tableWidget, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout)
@@ -215,14 +227,15 @@ class Ui_MainWindow(object):
         self.apkbrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.obfuscateButton.setText(QCoreApplication.translate("MainWindow", u"Obfuscate", None))
         self.apkpathLabel.setText(QCoreApplication.translate("MainWindow", u"APK Path: ", None))
+        ___qtablewidgetitem = self.comparetableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Category", None));
+        ___qtablewidgetitem1 = self.comparetableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Original", None));
+        ___qtablewidgetitem2 = self.comparetableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Obfuscated", None));
         self.comparisonmetricsLabel.setText(QCoreApplication.translate("MainWindow", u"Comparison Metrics", None))
         self.changedfilesLabel.setText(QCoreApplication.translate("MainWindow", u"List of Changed Files", None))
-        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Category", None));
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Original", None));
-        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Obfuscated", None));
+        self.label.setText(QCoreApplication.translate("MainWindow", u"App Runtime Metrics", None))
         self.keystoreBrowseButton.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.keyaliasLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Alias: ", None))
         self.keypassLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Password: ", None))
