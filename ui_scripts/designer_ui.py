@@ -26,6 +26,8 @@ mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
 sys.path.append(mymodule_dir)
 import controller  # vscode
 
+mutex = threading.Lock()
+
 
 def exit_program():
     quit()
@@ -38,16 +40,24 @@ class Worker(QObject):
         self.list_widget: QListWidget = list_widget
 
     finished = pyqtSignal()
+    decompiled = pyqtSignal()
     progress = pyqtSignal(int)
     recompiled = pyqtSignal(bool)
 
     def run(self):
+        global mutex
+
         # decompile apk into smali
         self.controller.disassemble_apk()
+        self.decompiled.emit()
+
+        # allow main thread to read files
+        mutex.acquire()
 
         # obfuscate smali files
         counter = 0
         self.controller.obfuscate_manifest()
+        self.add_to_list(self.controller.manifest_file)
         counter += 1
         self.progress.emit(counter)
         for smali_file in self.controller.smali_files:
@@ -57,6 +67,7 @@ class Worker(QObject):
             self.add_to_list(smali_file)
 
         self.finished.emit()
+        mutex.release()
 
     def run_recompile(self):
         self.recompiled.emit(self.controller.recompile_and_sign_apk())
@@ -100,6 +111,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
 
+        self.original_smali: List[str] = []
+        self.obfuscated_smali: List[str] = []
         self.files_obfuscated = 0
         self.progress_window_canvas: Union[QMessageBox, None] = None
         self.progress_bar_window: Union[QMessageBox, None] = None
@@ -127,21 +140,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 disassemble_time = time.process_time()
                 obfuscate_time = time.process_time()
-                time.sleep(2)
 
                 # Get APK Hash
                 before_hash_md5 = hashlib.md5()
-                with open(self.apkpathEdit.text(),"rb") as f:
+                with open(self.apkpathEdit.text(), "rb") as f:
                     for byte_block in iter(lambda: f.read(4096), b""):
                         before_hash_md5.update(byte_block)
 
                 before_hash_sha1 = hashlib.sha1()
-                with open(self.apkpathEdit.text(),"rb") as f:
+                with open(self.apkpathEdit.text(), "rb") as f:
                     for byte_block in iter(lambda: f.read(4096), b""):
                         before_hash_sha1.update(byte_block)
 
                 before_hash_sha256 = hashlib.sha256()
-                with open(self.apkpathEdit.text(),"rb") as f:
+                with open(self.apkpathEdit.text(), "rb") as f:
                     for byte_block in iter(lambda: f.read(4096), b""):
                         before_hash_sha256.update(byte_block)
                 
@@ -160,7 +172,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.compareTableWidget.insertRow(3)
                 self.compareTableWidget.setItem(3, 0, QTableWidgetItem("File Size"))
-                self.compareTableWidget.setItem(3, 1, QTableWidgetItem(str(round(os.path.getsize(self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
+                self.compareTableWidget.setItem(3,
+                                                1,
+                                                QTableWidgetItem(str(
+                                                    round(os.path.getsize(
+                                                        self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
 
                 # Runtime Table
                 self.runtimeTableWidget.insertRow(0)
@@ -177,6 +193,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.worker_thread.moveToThread(self.thread)
                 self.thread.started.connect(self.worker_thread.run)
+                self.worker_thread.decompiled.connect(self.get_original_files)
                 self.worker_thread.finished.connect(self.thread.quit)
                 self.worker_thread.finished.connect(self.all_done_window)
                 self.worker_thread.finished.connect(self.worker_thread.deleteLater)
@@ -192,6 +209,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         else:
             self.popup("Error", "Incorrect File Provided!")
+
+    def get_original_files(self):
+        global mutex
+        mutex.acquire()
+        with open(self.o.manifest_file, 'r') as file:
+            self.original_smali.append(file.read())
+        for smali_file in self.o.smali_files:
+            with open(smali_file, 'r') as file:
+                self.original_smali.append(file.read())
+        mutex.release()
 
     def progress_window(self):
         self.progress_window_canvas = QMessageBox()
@@ -213,6 +240,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.all_done_canvas.setStandardButtons(QMessageBox.Ok)
         self.all_done_canvas.exec_()
 
+        # grab contents of obfuscated files
+        with open(self.o.manifest_file, 'r') as file:
+            self.obfuscated_smali.append(file.read())
+        for smali_file in self.o.smali_files:
+            with open(smali_file, 'r') as file:
+                self.obfuscated_smali.append(file.read())
+
     def increase_loading_bar(self, inc: int):
         self.progress_window_canvas.setText("Number of files decompiled & obfuscated: " + str(inc))
         self.files_obfuscated = inc
@@ -225,30 +259,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.message_box.exec_()
 
     def compare_file(self):
-        filelist = self.o.smali_files
-        print(filelist[0])
-        r = re.compile(f"\\\\{self.listWidget.currentItem().text()}")
-        newlist = list(filter(r.match, filelist))
-        with open(filelist[self.listWidget.currentRow()], 'r') as file:
-            after_text = file.read()#.replace('\n', '')
-        
-        before_text = "test"
+        before_text = self.original_smali[self.listWidget.currentRow()]
+        after_text = self.obfuscated_smali[self.listWidget.currentRow()]
 
-        self.compare_box = listPopUp(before_text, after_text)
+        self.compare_box = ListPopUp(before_text, after_text)
         self.compare_box.show()
-
-        '''
-        self.compare_box = QMessageBox()
-        self.compare_box.setLayout(QHBoxLayout())
-        
-        self.compare_box.setStyleSheet(qdarkstyle.load_stylesheet())
-        
-        # self.compare_box.setText(text)
-        self.compare_box.setWindowTitle(self.listWidget.currentItem().text())
-
-        self.addCompareWidget()
-        self.compare_box.exec_()
-        '''
 
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\
@@ -298,17 +313,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             # Get APK Hash
             after_hash_md5 = hashlib.md5()
-            with open(self.o.output_apk_path,"rb") as f:
+            with open(self.o.output_apk_path, "rb") as f:
                 for byte_block in iter(lambda: f.read(4096), b""):
                     after_hash_md5.update(byte_block)
 
             after_hash_sha1 = hashlib.sha1()
-            with open(self.o.output_apk_path,"rb") as f:
+            with open(self.o.output_apk_path, "rb") as f:
                 for byte_block in iter(lambda: f.read(4096), b""):
                     after_hash_sha1.update(byte_block)
 
             after_hash_sha256 = hashlib.sha256()
-            with open(self.o.output_apk_path,"rb") as f:
+            with open(self.o.output_apk_path, "rb") as f:
                 for byte_block in iter(lambda: f.read(4096), b""):
                     after_hash_sha256.update(byte_block)
             
@@ -316,9 +331,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.compareTableWidget.setItem(0, 2, QTableWidgetItem(after_hash_md5.hexdigest()))
             self.compareTableWidget.setItem(1, 2, QTableWidgetItem(after_hash_sha1.hexdigest()))
             self.compareTableWidget.setItem(2, 2, QTableWidgetItem(after_hash_sha256.hexdigest()))
-            self.compareTableWidget.setItem(3, 2, QTableWidgetItem(str(round(os.path.getsize(self.o.output_apk_path) / (1024 * 1024), 3)) + " MB"))
-                    
-            os.startfile(self.o.output_apk_path)
+            self.compareTableWidget.setItem(3,
+                                            2,
+                                            QTableWidgetItem(
+                                                str(round(os.path.getsize(
+                                                    self.o.output_apk_path) / (1024 * 1024), 3)) + " MB"))
+            os.startfile(os.path.dirname(self.o.output_apk_path))
         else:
             build_sign_message_box.setWindowTitle("Build & Sign Failed!")
             build_sign_message_box.setText("Unable to build and sign the obfuscated project files. "
@@ -326,7 +344,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         build_sign_message_box.exec_()
 
-class listPopUp(QMainWindow, popout):
+
+class ListPopUp(QMainWindow, popout):
     def __init__(self, before_text: str, after_text: str,):
         super().__init__()
         self.setupUi(self)
@@ -337,10 +356,11 @@ class listPopUp(QMainWindow, popout):
         
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
-        self.popoutOkButton.clicked.connect(self.closeWindow)
+        self.popoutOkButton.clicked.connect(self.close_window)
 
-    def closeWindow(self):
+    def close_window(self):
         self.close()
+
 
 def main():
     # You need one (and only one) QApplication instance per application.
@@ -358,4 +378,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
