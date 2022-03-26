@@ -10,6 +10,7 @@ from PyQt5.QtCore import QObject, QThread, pyqtSignal
 from PySide2.QtGui import *
 from PyQt5.QtGui import *
 from obfuscator import Ui_MainWindow
+from comparer import Ui_MainWindow as popout
 from typing import List, Union
 import os
 import sys
@@ -319,31 +320,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         build_sign_message_box.exec_()
 
-class listPopUp(QMainWindow):
-    def __init__(self, before_text: str, after_text: str):
-        super().__init__()
+class listPopUp(QMainWindow, popout):
+    def __init__(self, before_text: str, after_text: str, parent=MainWindow):
+        super().__init__(parent)
         self.before_text: str = before_text
         self.after_text: str = after_text
+
         self.setStyleSheet(qdarkstyle.load_stylesheet())
 
-        self.setObjectName("Dialog")
-        self.resize(400, 211)
-        self.popupWindow = QLabel(self)
-
-        self.compare_layout = QHBoxLayout()
-        self.beforeTextEdit = QTextEdit()
-        self.afterTextEdit = QTextEdit()
-        self.closeButton = QPushButton()
-        self.closeButton.setObjectName("closeButton")
-
-        self.beforeTextEdit.setText(self.before_text)
-        self.afterTextEdit.setText(self.after_text)
-
-        self.popupWindow.setGeometry(QRect(20, 70, 360, 71))
-        self.popupWindow.setObjectName("popupWindow")
-        self.popupWindow.setLayout(self.compare_layout)
-
-        self.closeButton.clicked.connect(self.closeWindow)
+        self.popoutOkButton.clicked.connect(self.closeWindow)
 
     def closeWindow(self):
         self.close()
@@ -356,7 +341,6 @@ def main():
 
     # Create a Qt widget, which will be our window.
     window = MainWindow()
-    window.setWindowTitle("The Best Smali Obfuscator")
     window.show()  # IMPORTANT!!!!! Windows are hidden by default.
 
     # Start the event loop.
