@@ -37,8 +37,8 @@ class Controller:
         self.output_apk_path: str = os.path.join(os.path.dirname(self.apk_path),
                                                  os.path.splitext(os.path.basename(self.apk_path))[0],
                                                  "output_files",
-                                                 os.path.splitext(os.path.basename(self.apk_path))[0],
-                                                 "_obfuscated.apk")
+                                                 f"{os.path.splitext(os.path.basename(self.apk_path))[0]}"
+                                                 f"_obfuscated.apk")
         self.keystore_file: str = keystore_file
         self.keystore_passwd: str = keystore_passwd
         self.key_alias: str = key_alias
@@ -83,7 +83,7 @@ class Controller:
                                                                       self.working_dir_path)
 
         try:
-            print('Running decode command "{0}"'.format(cmd))
+            print('Running disassemble command "{0}"'.format(cmd))
 
             # A new line character is sent as input since newer versions of Apktool
             # have an interactive prompt on Windows where the user should press a key.
@@ -186,16 +186,20 @@ class Controller:
         cmd_recompile = "java -jar \"{0}\" b --force-all \"{1}\" -o \"{2}\"".format(apktools_path,
                                                                                     self.working_dir_path,
                                                                                     self.output_apk_path)
-        cmd_sign = "{0} sign --ks {1} --ks-pass pass:{2} {3}".format(
+        cmd_sign = "\"{0}\" sign --ks \"{1}\" --ks-pass pass:{2}".format(
             apksigner_path,
             self.keystore_file,
-            self.keystore_passwd,
-            self.output_apk_path)
+            self.keystore_passwd)
 
-        if self.key_alias:
+        # append key alias and password if applicable
+        if self.key_alias != "":
             cmd_sign += "--ks-key-alias {0} --key-pass pass:{1}".format(self.key_alias, self.key_passwd)
 
+        # append recompiled apk at end of command
+        cmd_sign += f" \"{self.output_apk_path}\""
+
         try:
+            print('Running recompile command "{0}"'.format(cmd_recompile))
             output_recompile = subprocess.check_output(cmd_recompile, stderr=subprocess.STDOUT, input=b"\n").strip()
 
             if (
@@ -213,7 +217,9 @@ class Controller:
                 )
 
             # sign recompiled apk
+            print('Running apksigner command "{0}"'.format(cmd_sign))
             subprocess.check_output(cmd_sign, stderr=subprocess.STDOUT).strip()
+            print("Successfully recompiled and signed APK")
         except Exception as e:
             print("Error during apk compilation: {0}".format(e))
             raise

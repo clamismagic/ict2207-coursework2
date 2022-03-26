@@ -254,11 +254,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def recompile_and_sign(self):
         if self.keystorePassEdit.text() != ''\
-                and self.keystorePathEdit.text() != ''\
-                and self.aliaspassEdit.text() != ''\
-                and self.keyaliasEdit.text() != '':
+                and self.keystorePathEdit.text() != '':
+            #    and self.aliaspassEdit.text() != ''\
+            #    and self.keyaliasEdit.text() != '':
             try:
-                print("test")
+                self.o.keystore_file = self.keystorePathEdit.text()
+                self.o.keystore_passwd = self.keystorePassEdit.text()
+                self.o.key_alias = self.keyaliasEdit.text()
+                self.o.key_passwd = self.aliaspassEdit.text()
                 self.o.recompile_and_sign_apk()
             except Exception as e:
                 print("Error: {0}".format(e))
