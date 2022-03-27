@@ -1,11 +1,8 @@
-import itertools
+# imports here
 import os
 import random
-import re
 import string
-from string import ascii_letters
 from contextlib import contextmanager
-from hashlib import md5, sha256
 from typing import List
 
 

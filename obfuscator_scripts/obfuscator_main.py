@@ -1,10 +1,8 @@
 # imports here
-# from obfuscator_scripts import helper # pycharm
 import helper  # vscode
 import re
 import random
-from typing import List, Dict, Match
-
+from typing import List
 
 class Obfuscator:
     def __init__(self):
