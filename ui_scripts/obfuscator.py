@@ -214,19 +214,9 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.buildHLayout)
 
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(MainWindow)
-        self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1200, 21))
-        self.menuFiles = QMenu(self.menubar)
-        self.menuFiles.setObjectName(u"menuFiles")
-        MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
-        self.menubar.addAction(self.menuFiles.menuAction())
-        self.menuFiles.addAction(self.actionExit)
-        self.menuFiles.addSeparator()
 
         self.retranslateUi(MainWindow)
 
@@ -258,6 +248,5 @@ class Ui_MainWindow(object):
         self.aliaspassLabel.setText(QCoreApplication.translate("MainWindow", u"Alias Password: ", None))
         self.buildsignButton.setText(QCoreApplication.translate("MainWindow", u"Build and Sign", None))
         self.keypathLabel.setText(QCoreApplication.translate("MainWindow", u"Keystore Path: ", None))
-        self.menuFiles.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
     # retranslateUi
 
