@@ -1,9 +1,4 @@
 # import all for now
-from email import message
-from http.client import OK
-from msilib.schema import ListView
-from tkinter import E, Widget, messagebox
-from tkinter.ttk import Treeview
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
 from PyQt5.QtCore import QObject, QThread, pyqtSignal
@@ -19,26 +14,25 @@ import magic
 import threading
 import hashlib
 import time
-import re
 
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, '..', 'obfuscator_scripts')
 sys.path.append(mymodule_dir)
 import controller  # vscode
 
+# Mutex for threading
 mutex = threading.Lock()
 
-
-def exit_program():
-    quit()
-
-
+# Worker Class
 class Worker(QObject):
+    # Initialize Worker constructor
     def __init__(self, controller: controller.Controller, list_widget: QListWidget = None):
         super().__init__()
+        # Mapping variables
         self.controller: controller.Controller = controller
         self.list_widget: QListWidget = list_widget
 
+    # Declaring variables
     finished = pyqtSignal()
     decompiled = pyqtSignal()
     disassemble_time_taken = pyqtSignal(float)
@@ -47,47 +41,56 @@ class Worker(QObject):
     progress = pyqtSignal(int)
     recompiled = pyqtSignal(bool)
 
+    # Run function
     def run(self):
+        #Declare mutex
         global mutex
 
-        # decompile apk into smali
+        # Decompile APK into smali
         start_disassembly = time.time()
         self.controller.disassemble_apk()
         self.disassemble_time_taken.emit(time.time() - start_disassembly)
         self.decompiled.emit()
 
-        # allow main thread to read files
+        # Allow main thread to read files
         mutex.acquire()
         print("OBFUSCATING FILES")
 
-        # obfuscate smali files
+        # Obfuscate Smali files
         start_obfuscation = time.time()
         counter = 0
         self.controller.obfuscate_manifest()
         self.add_to_list(self.controller.manifest_file)
         counter += 1
         self.progress.emit(counter)
+        # Add obfuscated smali file to list
         for smali_file in self.controller.smali_files:
             self.controller.obfuscate_smali(smali_file)
             counter += 1
             self.progress.emit(counter)
             self.add_to_list(smali_file)
 
+        # Emit time taken
         self.obfuscate_time_taken.emit(time.time() - start_obfuscation)
         self.finished.emit()
+
+        # Release mutex
         mutex.release()
 
+    # Emit recompile time taken
     def run_recompile(self):
         recompile_start_time = time.time()
         self.recompiled.emit(self.controller.recompile_and_sign_apk())
         self.recompile_time_taken.emit(time.time() - recompile_start_time)
         self.finished.emit()
 
+    # Add smali file to list widget
     def add_to_list(self, smali_file: str):
         self.list_widget.addItem(smali_file.rsplit("\\", 1)[1])
 
-
+# MainWindow class
 class MainWindow(QMainWindow, Ui_MainWindow):
+    # Initialize MainWindow
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -103,7 +106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
         self.listWidget.itemClicked.connect(self.compare_file)
-        self.actionExit.triggered.connect(exit_program)
+        #self.actionExit.triggered.connect(self.exit_program)
 
         # App Comparison Table
         self.compareTableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -129,18 +132,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.all_done_canvas: Union[QMessageBox, None] = None
         self.disassemble_time_taken: float = 0
         self.obfuscate_time_taken: float = 0
-        self.compare_box: Union[QMessageBox, None] = None
+        self.compare_box: Union[ListPopUp, None] = None
         self.recompile_thread: QThread = QThread()
         self.recompile_worker_thread: Union[Worker, None] = None
         self.recompiled: bool = False
+        self.is_obfuscated: bool = False
         self.recompile_time_taken: float = 0
         self.recompile_loading_window: Union[QMessageBox, None] = None
+    
+    # Close window will close all popouts as well
+    def closeEvent(self, a):
+        if self.compare_box is not None:
+            self.compare_box.close_window()
 
     # APK Browse Button
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
         # print(file_path[0])
         self.apkpathEdit.setText(file_path[0])
+        
+        # Set is_obfuscated to False
+        self.is_obfuscated = False
 
     # Keystore Browse Button
     def keystore_browse(self):
@@ -152,8 +164,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def obfuscate(self):
         # Delcare Mutex
         global mutex
-        if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()):
+
+        if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()) and self.is_obfuscated != True:
             try:
+                # Reset Tables, List & Smali Lists
+                self.compareTableWidget.setRowCount(0)
+                self.runtimeTableWidget.setRowCount(0)
+                self.listWidget.clear()
+                self.original_smali.clear()
+                self.obfuscated_smali.clear()
+
                 # Get Original APK Hashes
                 before_hash_md5 = hashlib.md5()
                 with open(self.apkpathEdit.text(), "rb") as f:
@@ -226,13 +246,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Worker Finished, show done window
                 self.worker_thread.finished.connect(self.thread.quit)
                 self.worker_thread.finished.connect(self.all_done_window)
-                self.worker_thread.finished.connect(self.worker_thread.deleteLater)
-                self.thread.finished.connect(self.thread.deleteLater)
+                #self.worker_thread.finished.connect(self.worker_thread.deleteLater)
+                #self.thread.finished.connect(self.thread.deleteLater)
                 self.worker_thread.progress.connect(self.increase_loading_bar)
                 self.thread.start()
 
                 # Show Loading Window
                 self.progress_window()
+
+                # Lock Obfuscator
+                self.is_obfuscated = True
 
             # If error
             except Exception as e:
@@ -241,7 +264,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Error in APK file provided
         else:
-            self.popup("Error", "Incorrect File Provided!")
+            if self.is_obfuscated == True:
+                self.popup("Error", "Code already obfuscated!")
+            else:
+                self.popup("Error", "Incorrect File Provided!")
 
     # Print original decompiled files to list
     def get_original_files(self):
@@ -312,7 +338,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress_window_canvas.setText("Number of files decompiled & obfuscated: " + str(inc))
         self.files_obfuscated = inc
 
-    # Popout box with custom title & message
+    # Popout box with custom title & message to handle error
     def popup(self, title, popup_message):
         self.message_box = QMessageBox()
         self.message_box.setStyleSheet(qdarkstyle.load_stylesheet())
@@ -463,7 +489,6 @@ class ListPopUp(QMainWindow, popout):
     def close_window(self):
         self.close()
 
-
 def main():
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
@@ -476,7 +501,6 @@ def main():
 
     # Start the event loop.
     app.exec_()
-
 
 if __name__ == "__main__":
     main()
