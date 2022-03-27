@@ -176,9 +176,9 @@ class Controller:
     def recompile_and_sign_apk(self) -> bool:
         apktools_path = os.path.join(self.project_root, "tools", "apktool.jar")
         apksigner_path = os.path.join(self.project_root, "tools", "apksigner.bat")
-        cmd_recompile = "java -jar \"{0}\" b --force-all \"{1}\" -o \"{2}\"".format(apktools_path,
-                                                                                    self.working_dir_path,
-                                                                                    self.output_apk_path)
+        cmd_recompile = "java -jar \"{0}\" b --force-all \"{1}\" -o \"{2}\" --use-aapt2".format(apktools_path,
+                                                                                                self.working_dir_path,
+                                                                                                self.output_apk_path)
         cmd_sign = "\"{0}\" sign --ks \"{1}\" --ks-pass pass:{2}".format(
             apksigner_path,
             self.keystore_file,

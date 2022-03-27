@@ -23,6 +23,7 @@ import controller  # vscode
 # Mutex for threading
 mutex = threading.Lock()
 
+
 # Worker Class
 class Worker(QObject):
     # Initialize Worker constructor
@@ -43,7 +44,7 @@ class Worker(QObject):
 
     # Run function
     def run(self):
-        #Declare mutex
+        # Declare mutex
         global mutex
 
         # Decompile APK into smali
@@ -88,6 +89,7 @@ class Worker(QObject):
     def add_to_list(self, smali_file: str):
         self.list_widget.addItem(smali_file.rsplit("\\", 1)[1])
 
+
 # MainWindow class
 class MainWindow(QMainWindow, Ui_MainWindow):
     # Initialize MainWindow
@@ -106,7 +108,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.apkbrowseButton.clicked.connect(self.apk_browse)
         self.obfuscateButton.clicked.connect(self.obfuscate)
         self.listWidget.itemClicked.connect(self.compare_file)
-        #self.actionExit.triggered.connect(self.exit_program)
 
         # App Comparison Table
         self.compareTableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -148,7 +149,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # APK Browse Button
     def apk_browse(self):
         file_path = QFileDialog.getOpenFileName(self, 'Open APK File', "", "Android Package File (*.apk)")
-        # print(file_path[0])
         self.apkpathEdit.setText(file_path[0])
         
         # Set is_obfuscated to False
@@ -157,15 +157,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Keystore Browse Button
     def keystore_browse(self):
         key_path = QFileDialog.getOpenFileName(self, 'Open JKS File', "", "JKS File (*.jks)")
-        # print(key_path[0])
         self.keystorePathEdit.setText(key_path[0])
 
     # Obfuscate Button
     def obfuscate(self):
-        # Delcare Mutex
+        # Declare Mutex
         global mutex
 
-        if self.apkpathEdit.text() != '' and "Zip archive data" in magic.from_file(self.apkpathEdit.text()) and self.is_obfuscated != True:
+        if self.apkpathEdit.text() != '' and \
+                "Zip archive data" in magic.from_file(self.apkpathEdit.text()) and \
+                self.is_obfuscated is False:
             try:
                 # Reset Tables, List & Smali Lists
                 self.compareTableWidget.setRowCount(0)
@@ -213,7 +214,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                     round(os.path.getsize(
                                                         self.apkpathEdit.text()) / (1024 * 1024), 3)) + " MB"))
 
-
                 # Runtime Table
                 # Setup Rows
                 self.runtimeTableWidget.insertRow(0)
@@ -246,8 +246,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Worker Finished, show done window
                 self.worker_thread.finished.connect(self.thread.quit)
                 self.worker_thread.finished.connect(self.all_done_window)
-                #self.worker_thread.finished.connect(self.worker_thread.deleteLater)
-                #self.thread.finished.connect(self.thread.deleteLater)
                 self.worker_thread.progress.connect(self.increase_loading_bar)
                 self.thread.start()
 
@@ -264,7 +262,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Error in APK file provided
         else:
-            if self.is_obfuscated == True:
+            if self.is_obfuscated is True:
                 self.popup("Error", "Code already obfuscated!")
             else:
                 self.popup("Error", "Incorrect File Provided!")
@@ -283,7 +281,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Release Mutex
         mutex.release()
 
-    # Disassmebled Time
+    # Disassembled Time
     def get_disassemble_time_taken(self, time_taken: float):
         self.disassemble_time_taken = time_taken
 
@@ -465,6 +463,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Run Success/Fail Message Box
         build_sign_message_box.exec_()
 
+
 # Popup Window Object for ListWidget
 class ListPopUp(QMainWindow, popout):
     def __init__(self, before_text: str, after_text: str,):
@@ -489,6 +488,7 @@ class ListPopUp(QMainWindow, popout):
     def close_window(self):
         self.close()
 
+
 def main():
     # You need one (and only one) QApplication instance per application.
     # Pass in sys.argv to allow command line arguments for your app.
@@ -501,6 +501,7 @@ def main():
 
     # Start the event loop.
     app.exec_()
+
 
 if __name__ == "__main__":
     main()
