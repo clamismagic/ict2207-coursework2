@@ -33,8 +33,6 @@ instance-of
 array-length
 new-instance
 new-array
-filled-new-array
-filled-new-array/range
 throw
 goto
 goto/16
