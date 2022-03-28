@@ -165,9 +165,9 @@ class Controller:
     def obfuscate_smali(self, smali_file: str):
         # obfuscate individual smali files based on user selection
         self.obfuscator.nop_obfuscator(smali_file)
-        self.obfuscator.goto_obfuscator(smali_file)
-        self.obfuscator.opaque_predicate(smali_file)  # uncomment to run opaque predicate (pls work) -GJ
-        self.obfuscator.junk_method(smali_file)  # uncomment to run junk method -GJ
+        self.obfuscator.goto_obfuscator(smali_file)  # must run goto obfuscator before opaque predicates
+        self.obfuscator.opaque_predicate(smali_file)  # uncomment to run opaque predicate
+        self.obfuscator.junk_method(smali_file)  # uncomment to run junk method
 
     def obfuscate_manifest(self):
         # call to obfuscate Android Manifest based on user selection

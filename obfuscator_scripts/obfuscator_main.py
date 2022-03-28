@@ -173,9 +173,9 @@ class Obfuscator:
                         method_wolabels.append(line)
 
                         # to inject the fake branch and its variables right after ".locals x"
-                        # If there are at least 2 registers available, add a fake branch at the beginning of the method: one branch
-                        # will continue from here, the other branch will go to the end of the method and then will return here
-                        # through a "goto" instruction.
+                        # If there are at least 2 registers available, add a fake branch at the beginning of the method:
+                        # one branch will continue from here, the other branch will go to the end of the method and
+                        # then will return here through a "goto" instruction.
                         match = self.locals_pattern.match(line)
                         if match and int(match.group("local_count")) >= 2:
                             pass_local = True
